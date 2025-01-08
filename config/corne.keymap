@@ -75,7 +75,7 @@
 
         escape {
             bindings = <&kp ESCAPE>;
-            key-positions = <13 29>;
+            key-positions = <1 29>;
         };
 
         delete {
@@ -188,7 +188,12 @@
 
         RCtrl {
             bindings = <&sk RCTRL>;
-            key-positions = <7 22>;
+            key-positions = <22 19>;
+        };
+
+        RCommand {
+            bindings = <&sk RIGHT_GUI>;
+            key-positions = <19 8>;
         };
     };
 
