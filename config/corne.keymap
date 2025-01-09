@@ -157,12 +157,6 @@
         DEF {
             display-name = "Base";
 
-            // -----------------------------------------------------------------------------------------
-            // |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  |
-            // |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |
-            // |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  |
-            // | GUI | CTRL | SHFT | LWR | SPC |   | ENT | RSE  | BKSP | ALT | ESC |
-
             bindings = <
 &none  &lt 3 Q           &kp W  &kp E                  &kp R      &kp T      &kp Y          &kp U      &kp I      &kp O    &kp P                  &none
 &none  &kp A             &kp S  &kp D                  &kp F      &kp G      &kp H          &kp J      &kp K      &kp L    &kp SEMI               &none
@@ -174,11 +168,6 @@
         NAV {
             display-name = "NavNum";
 
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  1  |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | BKSP |
-            // | BTCLR| BT1 | BT2 | BT3 | BT4 | BT5 |   | LFT | DWN |  UP | RGT |     |      |
-            // | SHFT |     |     |     |     |     |   |     |     |     |     |     |      |
-            // | GUI | CTRL | SHFT | LWR | SPC |   | ENT | RSE  | BKSP | ALT | ESC |
 
             bindings = <
 &none  &kp N1                 &kp N2    &kp N3        &kp N4           &kp N5           &kp N6     &kp N7  &kp N8  &kp N9  &mt SLASH ASTRK        &none
@@ -190,12 +179,6 @@
 
         SYM {
             display-name = "Symbols";
-
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  !  |  @  |  #  |  $  |  %  |   |  ^  |  &  |  *  |  (  |  )  | BKSP |
-            // | CTRL |     |     |     |     |     |   |  -  |  =  |  [  |  ]  |  \  |  `   |
-            // | SHFT |     |     |     |     |     |   |  _  |  +  |  {  |  }  | "|" |  ~   |
-            //                    | GUI |     | SPC |   | ENT |     | ALT |
 
             bindings = <
 &none   &kp EXCL                   &kp AT          &kp HASH        &kp DLLR         &kp PRCNT    &kp CARET  &kp AMPS   &kp ASTRK  &kp LEFT_PARENTHESIS  &kp RPAR           &none
@@ -225,6 +208,4 @@
             >;
         };
     };
-
-    conditional_layers { compatible = "zmk,conditional-layers"; };
 };
