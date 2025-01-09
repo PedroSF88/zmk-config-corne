@@ -156,6 +156,11 @@
             bindings = <&sk RIGHT_GUI>;
             key-positions = <19 8>;
         };
+
+        L3_adj {
+            bindings = <&tog 3>;
+            key-positions = <33 32>;
+        };
     };
 
     //
@@ -210,17 +215,17 @@
 &none   &kp EXCL                   &kp AT          &kp HASH        &kp DLLR         &kp PRCNT    &kp CARET  &kp AMPS       &kp ASTRK  &kp LEFT_PARENTHESIS  &kp RPAR  &none
 &none   &mt LEFT_COMMAND LEFT_GUI  &kp TAB         &kp UP_ARROW    &kp DELETE       &kp GRAVE    &kp MINUS  &kp EQUAL      &kp LBKT   &kp RBKT              &kp BSLH  &none
 &trans  &kp LEFT_SHIFT             &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TILDE    &kp UNDER  &kp PLUS       &kp LBRC   &kp RBRC              &kp PIPE  &none
-                                                   &to 0           &kp ENTER        &kp SPACE    &kp SPACE  &kp BACKSPACE  &to 2
+                                                   &to 0           &kp ENTER        &kp SPACE    &kp SPACE  &kp BACKSPACE  &to 1
             >;
         };
 
         ADJ {
             display-name = "System";
             bindings = <
-&none  &kp F1                     &kp F2        &kp F3        &kp F4            &kp F5            &kp F6        &kp F7         &kp F8   &kp F9   &kp F10      &none
-&none  &mt LEFT_COMMAND LEFT_GUI  &bt BT_SEL 0  &bt BT_SEL 1  &kp LEFT_COMMAND  &studio_unlock    &kp NUMBER_4  &kp N5         &kp F11  &kp F12  &bootloader  &none
-&none  &kp LSHFT                  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR        &bt BT_CLR_ALL    &kp NUMBER_6  &kp N7         &kp N8   &kp N9   &kp RSHIFT   &none
-                                                &to 0         &kp ENTER         &kp SPACE         &kp SPACE     &kp BACKSPACE  &to 0
+&none  &kp F1                     &kp F2        &kp F3        &kp F4            &kp F5            &kp F6     &kp F7         &kp F8   &kp F9   &kp F10      &none
+&none  &mt LEFT_COMMAND LEFT_GUI  &bt BT_SEL 0  &bt BT_SEL 1  &kp LEFT_COMMAND  &studio_unlock    &none      &none          &kp F11  &kp F12  &bootloader  &none
+&none  &kp LSHFT                  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR        &bt BT_CLR_ALL    &none      &none          &none    &none    &kp RSHIFT   &none
+                                                &to 0         &kp ENTER         &kp SPACE         &kp SPACE  &kp BACKSPACE  &to 0
             >;
         };
 
@@ -235,12 +240,5 @@
         };
     };
 
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
-
-        Adj {
-            if-layers = <0 2>;
-            then-layer = <3>;
-        };
-    };
+    conditional_layers { compatible = "zmk,conditional-layers"; };
 };
