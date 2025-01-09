@@ -9,26 +9,6 @@
 #define EXTRA 4
 
 / {
-    behaviors {
-        paraless: paraless {
-            compatible = "zmk,behavior-mod-morph";
-            label = "PARALESS";
-            bindings = <&kp LEFT_PARENTHESIS>, <&kp LESS_THAN>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT)>;
-        };
-
-        paragreat: paragreat {
-            compatible = "zmk,behavior-mod-morph";
-            label = "PARAGREAT";
-            bindings = <&kp RIGHT_PARENTHESIS>, <&kp GREATER_THAN>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT)>;
-        };
-    };
-
     macros {
         browsertab: browsertab {
             compatible = "zmk,behavior-macro";
@@ -48,7 +28,7 @@
 
         escape {
             bindings = <&kp ESCAPE>;
-            key-positions = <1 29>;
+            key-positions = <13 28>;
         };
 
         perc {
@@ -136,6 +116,32 @@
         RCommand {
             bindings = <&sk RIGHT_GUI>;
             key-positions = <19 22>;
+        };
+
+        Exclamation {
+            bindings = <&kp EXCLAMATION>;
+            key-positions = <0 12>;
+        };
+
+        Caret {
+            bindings = <&kp CARET>;
+            key-positions = <6 18>;
+        };
+
+        And {
+            bindings = <&kp AMPERSAND>;
+            key-positions = <7 19>;
+        };
+
+        Lpar {
+            bindings = <&kp LEFT_PARENTHESIS>;
+            key-positions = <9 21>;
+        };
+
+        Rpar {
+            bindings = <&kp RPAR>;
+            key-positions = <10 22>;
+            slow-release;
         };
     };
 
