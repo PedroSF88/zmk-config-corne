@@ -167,7 +167,7 @@
         NAV {
             display-name = "NavNum";
             bindings = <
-&none  &lt 3 LEFT_GUI  &kp K_MUTE  &kp UP_ARROW    &browsertab  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
+&none  &to 3           &kp K_MUTE  &kp UP_ARROW    &browsertab  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
 &none  &kp TAB         &kp HOME    &kp UP_ARROW    &kp END      &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
 &none  &kp LEFT_SHIFT  &kp LEFT    &kp DOWN_ARROW  &kp RIGHT    &kp DELETE       &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
                                    &to 0           &trans       &trans           &trans     &trans  &to 2
@@ -177,20 +177,20 @@
         SYM {
             display-name = "Symbols";
             bindings = <
-&none   &kp F1  &kp F2   &kp F3   &kp F4   &kp LEFT_ALT      &bt BT_SEL 0      &bt BT_SEL 1          &bt BT_SEL 2  &bt BT_SEL 3           &bt BT_SEL 4       &none
-&none   &kp F5  &kp F6   &kp F7   &kp F8   &bt BT_CLR        &kp PLUS          &kp MINUS             &kp ASTERISK  &kp SLASH              &kp COMMA          &none
-&trans  &kp F9  &kp F10  &kp F11  &kp F12  &bt BT_CLR_ALL    &kp LEFT_BRACKET  &kp LEFT_PARENTHESIS  &kp PIPE      &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &none
-                         &to 0    &trans   &trans            &trans            &trans                &to 1
+&none   &kp F1  &kp F2   &kp F3   &kp F4   &kp LEFT_ALT    &kp AT            &kp HASH              &kp DOLLAR    &kp PERCENT            &kp AMPERSAND      &none
+&none   &kp F5  &kp F6   &kp F7   &kp F8   &kp EQUAL       &kp PLUS          &kp MINUS             &kp ASTERISK  &kp SLASH              &kp COMMA          &none
+&trans  &kp F9  &kp F10  &kp F11  &kp F12  &kp N2          &kp LEFT_BRACKET  &kp LEFT_PARENTHESIS  &kp PIPE      &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &none
+                         &to 0    &trans   &trans          &trans            &trans                &to 1
             >;
         };
 
         ADJ {
             display-name = "System";
             bindings = <
-&none  &none  &none  &none  &none   &studio_unlock    &kp F1  &kp F2   &kp F3   &kp F4   &kp RIGHT_ALT  &none
-&none  &none  &none  &none  &none   &none             &kp F5  &kp F6   &kp F7   &kp F8   &bootloader    &none
-&none  &none  &none  &none  &none   &none             &kp F9  &kp F11  &kp F11  &kp F12  &kp RSHIFT     &none
-                     &to 0  &trans  &trans            &trans  &trans   &to 0
+&none  &none         &bt BT_CLR    &bt BT_CLR_ALL  &none         &studio_unlock    &kp F1  &kp F2   &kp F3   &kp F4   &kp RIGHT_ALT  &none
+&none  &none         &none         &none           &none         &none             &kp F5  &kp F6   &kp F7   &kp F8   &bootloader    &none
+&none  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2    &bt BT_SEL 3  &bt BT_SEL 4      &kp F9  &kp F11  &kp F11  &kp F12  &kp RSHIFT     &none
+                                   &to 0           &trans        &trans            &trans  &trans   &to 0
             >;
         };
 
