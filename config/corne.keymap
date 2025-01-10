@@ -1,8 +1,6 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/pointing.h>
-#include <dt-bindings/zmk/pointing.h>
 
 #define DEF 0
 #define NAV 1
@@ -159,7 +157,7 @@
         DEF {
             display-name = "Base";
             bindings = <
-&none  &lt 3 Q           &kp W  &kp E                  &kp R      &kp T      &kp Y          &kp U      &kp I      &kp O    &kp P                  &none
+&none  &kp Q             &kp W  &kp E                  &kp R      &kp T      &kp Y          &kp U      &kp I      &kp O    &kp P                  &none
 &none  &kp A             &kp S  &kp D                  &kp F      &kp G      &kp H          &kp J      &kp K      &kp L    &kp SEMI               &none
 &none  &mt LEFT_SHIFT Z  &kp X  &kp C                  &kp V      &kp B      &kp N          &kp M      &kp COMMA  &kp DOT  &mt RIGHT_SHIFT SLASH  &none
                                 &mt LEFT_ALT QUESTION  &kp ENTER  &kp TAB    &kp BACKSPACE  &kp SPACE  &to 1
@@ -169,30 +167,30 @@
         NAV {
             display-name = "NavNum";
             bindings = <
-&none  &kp LGUI        &kp K_MUTE         &kp UP_ARROW       &browsertab  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
-&none  &kp TAB         &kp LEFT           &kp DOWN_ARROW     &kp RIGHT    &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
-&none  &kp LEFT_SHIFT  &kp K_VOLUME_DOWN  &kp K_VOLUME_DOWN  &kp HOME     &kp END          &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
-                                          &to 0              &trans       &trans           &trans     &trans  &to 2
+&none  &lt 3 LEFT_GUI  &kp K_MUTE         &kp UP_ARROW     &browsertab  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
+&none  &kp TAB         &kp LEFT           &kp DOWN_ARROW   &kp RIGHT    &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
+&none  &kp LEFT_SHIFT  &kp C_VOLUME_DOWN  &kp C_VOLUME_UP  &kp HOME     &kp END          &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
+                                          &to 0            &trans       &trans           &trans     &trans  &to 2
             >;
         };
 
         SYM {
             display-name = "Symbols";
             bindings = <
-&none   &none            &mkp LCLK       &msc MOVE_Y 20  &mkp RCLK        &none             &bt BT_SEL 0      &bt BT_SEL 1          &bt BT_SEL 2  &bt BT_SEL 3           &bt BT_SEL 4       &none
-&none   &msc MOVE_X -20  &msc SCRL_LEFT  &msc SCRL_UP    &msc SCRL_RIGHT  &msc MOVE_X 20    &kp PLUS          &kp MINUS             &kp ASTERISK  &kp SLASH              &kp COMMA          &none
-&trans  &bt BT_CLR       &kp LEFT_ARROW  &msc SCRL_DOWN  &kp RIGHT_ARROW  &kp TILDE         &kp LEFT_BRACKET  &kp LEFT_PARENTHESIS  &kp PIPE      &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &none
-                                         &to 0           &trans           &trans            &trans            &trans                &to 1
+&none   &kp F1  &kp F2   &kp F3   &kp F4   &kp LEFT_ALT      &bt BT_SEL 0      &bt BT_SEL 1          &bt BT_SEL 2  &bt BT_SEL 3           &bt BT_SEL 4       &none
+&none   &kp F5  &kp F6   &kp F7   &kp F8   &bt BT_CLR        &kp PLUS          &kp MINUS             &kp ASTERISK  &kp SLASH              &kp COMMA          &none
+&trans  &kp F9  &kp F10  &kp F11  &kp F12  &bt BT_CLR_ALL    &kp LEFT_BRACKET  &kp LEFT_PARENTHESIS  &kp PIPE      &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &none
+                         &to 0    &trans   &trans            &trans            &trans                &to 1
             >;
         };
 
         ADJ {
             display-name = "System";
             bindings = <
-&none  &none                      &none         &none         &none             &studio_unlock    &kp F1  &kp F2   &kp F3   &kp F4   &kp RIGHT_ALT  &none
-&none  &mt LEFT_COMMAND LEFT_GUI  &bt BT_SEL 0  &bt BT_SEL 1  &kp LEFT_COMMAND  &none             &kp F5  &kp F6   &kp F7   &kp F8   &bootloader    &none
-&none  &kp LSHFT                  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR        &bt BT_CLR_ALL    &kp F9  &kp F11  &kp F11  &kp F12  &kp RSHIFT     &none
-                                                &to 0         &trans            &trans            &trans  &trans   &to 0
+&none  &none  &none  &none  &none   &studio_unlock    &kp F1  &kp F2   &kp F3   &kp F4   &kp RIGHT_ALT  &none
+&none  &none  &none  &none  &none   &none             &kp F5  &kp F6   &kp F7   &kp F8   &bootloader    &none
+&none  &none  &none  &none  &none   &none             &kp F9  &kp F11  &kp F11  &kp F12  &kp RSHIFT     &none
+                     &to 0  &trans  &trans            &trans  &trans   &to 0
             >;
         };
 
