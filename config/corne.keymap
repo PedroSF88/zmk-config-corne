@@ -28,78 +28,7 @@
 
         escape {
             bindings = <&kp ESCAPE>;
-            key-positions = <13 28>;
-        };
-
-        perc {
-            bindings = <&kp PERCENT>;
-            key-positions = <5 17>;
-        };
-
-        equal {
-            bindings = <&kp EQUAL>;
-            key-positions = <28 16>;
-        };
-
-        dollar {
-            bindings = <&kp DOLLAR>;
-            key-positions = <4 16>;
-        };
-
-        pound {
-            bindings = <&kp POUND>;
-            key-positions = <3 15>;
-        };
-
-        at {
-            bindings = <&kp AT>;
-            key-positions = <2 14>;
-        };
-
-        backslash {
-            bindings = <&kp BACKSLASH>;
-            key-positions = <26 14>;
-        };
-
-        star {
-            bindings = <&kp STAR>;
-            key-positions = <8 20>;
-        };
-
-        slash {
-            bindings = <&kp SLASH>;
-            key-positions = <32 20>;
-        };
-
-        plus {
-            bindings = <&kp PLUS>;
-            key-positions = <7 19>;
-        };
-
-        minus {
-            bindings = <&kp KP_MINUS>;
-            key-positions = <18 19 18 19>;
-        };
-
-        underscore {
-            bindings = <&kp UNDER>;
-            key-positions = <30 18>;
-        };
-
-        leftbrack {
-            bindings = <&kp LEFT_BRACKET>;
-            key-positions = <31 32>;
-        };
-
-        rightbrack {
-            bindings = <&kp RIGHT_BRACKET>;
-            key-positions = <33 32>;
-        };
-
-        LCtrl {
-            bindings = <&sk LCTRL>;
-            key-positions = <3 2>;
-            layers = <0>;
+            key-positions = <13 29>;
         };
 
         CtrlAltDel {
@@ -118,38 +47,57 @@
             key-positions = <19 22>;
         };
 
-        Exclamation {
-            bindings = <&kp EXCLAMATION>;
-            key-positions = <13 2>;
-        };
-
-        Caret {
-            bindings = <&kp CARET>;
-            key-positions = <6 18>;
-        };
-
-        And {
-            bindings = <&kp AMPERSAND>;
-            key-positions = <7 19>;
-        };
-
-        Lpar {
-            bindings = <&kp LEFT_PARENTHESIS>;
-            key-positions = <9 21>;
-        };
-
-        Rpar {
-            bindings = <&kp RPAR>;
-            key-positions = <10 22>;
-        };
-
         Aposthrophe {
             bindings = <&kp APOSTROPHE>;
             key-positions = <21 22>;
         };
+
+        backspace {
+            bindings = <&kp BACKSPACE>;
+            key-positions = <10 16>;
+        };
+
+        Tab {
+            bindings = <&kp TAB>;
+            key-positions = <13 16>;
+        };
+
+        del {
+            bindings = <&kp DELETE>;
+            key-positions = <16 10>;
+        };
+
+        Up {
+            bindings = <&kp UP_ARROW>;
+            key-positions = <19 2>;
+        };
+
+        Down {
+            bindings = <&kp DOWN>;
+            key-positions = <14 19>;
+        };
+
+        Left {
+            bindings = <&kp LEFT>;
+            key-positions = <19 13>;
+        };
+
+        Right {
+            bindings = <&kp RIGHT>;
+            key-positions = <16 19>;
+        };
     };
 
     //
+
+    behaviors {
+        comma_period: comma_period {
+            compatible = "zmk,behavior-tap-dance";
+            label = "COMMA_PERIOD";
+            #binding-cells = <0>;
+            bindings = <&kp COMMA>, <&kp DOT>;
+        };
+    };
 
     keymap {
         compatible = "zmk,keymap";
@@ -157,20 +105,20 @@
         DEF {
             display-name = "Base";
             bindings = <
-&none  &kp Q             &kp W  &kp E                  &kp R      &kp T      &kp Y          &kp U      &kp I      &kp O    &kp P                  &none
-&none  &kp A             &kp S  &kp D                  &kp F      &kp G      &kp H          &kp J      &kp K      &kp L    &kp SEMI               &none
-&none  &mt LEFT_SHIFT Z  &kp X  &kp C                  &kp V      &kp B      &kp N          &kp M      &kp COMMA  &kp DOT  &mt RIGHT_SHIFT SLASH  &none
-                                &mt LEFT_ALT QUESTION  &kp ENTER  &kp TAB    &kp BACKSPACE  &kp SPACE  &to 1
+&none  &kp Q           &kp W  &kp E                  &kp R      &kp T        &kp Y      &kp U      &kp I  &kp O          &kp P                  &none
+&none  &kp A           &kp S  &kp D                  &kp F      &kp G        &kp H      &kp J      &kp K  &kp L          &kp SEMI               &none
+&none  &kp LEFT_SHIFT  &kp Z  &kp X                  &kp C      &kp V        &kp B      &kp N      &kp M  &comma_period  &mt RIGHT_SHIFT SLASH  &none
+                              &mt LEFT_ALT QUESTION  &kp ENTER  &kp ENTER    &kp SPACE  &kp SPACE  &to 1
             >;
         };
 
         NAV {
             display-name = "NavNum";
             bindings = <
-&none  &to 3           &kp K_MUTE  &kp UP_ARROW    &browsertab  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
-&none  &kp TAB         &kp HOME    &kp UP_ARROW    &kp END      &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
-&none  &kp LEFT_SHIFT  &kp LEFT    &kp DOWN_ARROW  &kp RIGHT    &kp DELETE       &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
-                                   &to 0           &trans       &trans           &trans     &trans  &to 2
+&none  &to 3           &kp K_MUTE  &kp C_VOLUME_DOWN  &kp C_VOL_DN  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
+&none  &kp TAB         &kp HOME    &kp UP_ARROW       &kp END       &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
+&none  &kp LEFT_SHIFT  &kp LEFT    &kp DOWN_ARROW     &kp RIGHT     &kp DELETE       &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
+                                   &to 2              &trans        &trans           &trans     &trans  &to 0
             >;
         };
 
@@ -180,7 +128,7 @@
 &none   &kp F1  &kp F2   &kp F3   &kp F4   &kp LEFT_ALT    &kp AT            &kp HASH              &kp DOLLAR    &kp PERCENT            &kp AMPERSAND      &none
 &none   &kp F5  &kp F6   &kp F7   &kp F8   &kp EQUAL       &kp PLUS          &kp MINUS             &kp ASTERISK  &kp SLASH              &kp COMMA          &none
 &trans  &kp F9  &kp F10  &kp F11  &kp F12  &kp N2          &kp LEFT_BRACKET  &kp LEFT_PARENTHESIS  &kp PIPE      &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &none
-                         &to 0    &trans   &trans          &trans            &trans                &to 1
+                         &to 0    &trans   &trans          &trans            &trans                &to 0
             >;
         };
 
