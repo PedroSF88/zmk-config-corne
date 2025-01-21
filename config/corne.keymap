@@ -54,37 +54,17 @@
 
         backspace {
             bindings = <&kp BACKSPACE>;
-            key-positions = <10 16>;
+            key-positions = <10 9>;
         };
 
         Tab {
             bindings = <&kp TAB>;
-            key-positions = <13 16>;
+            key-positions = <16 14>;
         };
 
         del {
             bindings = <&kp DELETE>;
-            key-positions = <16 10>;
-        };
-
-        Up {
-            bindings = <&kp UP_ARROW>;
-            key-positions = <19 2>;
-        };
-
-        Down {
-            bindings = <&kp DOWN>;
-            key-positions = <14 19>;
-        };
-
-        Left {
-            bindings = <&kp LEFT>;
-            key-positions = <19 13>;
-        };
-
-        Right {
-            bindings = <&kp RIGHT>;
-            key-positions = <16 19>;
+            key-positions = <10 8>;
         };
     };
 
@@ -115,10 +95,10 @@
         NAV {
             display-name = "NavNum";
             bindings = <
-&none  &to 3           &kp K_MUTE  &kp C_VOLUME_DOWN  &kp C_VOL_DN  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
-&none  &kp TAB         &kp HOME    &kp UP_ARROW       &kp END       &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
-&none  &kp LEFT_SHIFT  &kp LEFT    &kp DOWN_ARROW     &kp RIGHT     &kp DELETE       &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
-                                   &to 2              &trans        &trans           &trans     &trans  &to 0
+&none  &to 3           &to 2     &kp C_VOLUME_DOWN  &kp C_VOL_DN  &kp PG_UP        &kp SLASH  &kp N7  &kp N8  &kp N9  &kp ASTRK              &none
+&none  &kp TAB         &kp HOME  &kp UP_ARROW       &kp END       &kp PAGE_DOWN    &kp EQUAL  &kp N4  &kp N5  &kp N6  &kp PLUS               &none
+&none  &kp LEFT_SHIFT  &kp LEFT  &kp DOWN_ARROW     &kp RIGHT     &kp DELETE       &kp N0     &kp N1  &kp N2  &kp N3  &mt RIGHT_SHIFT MINUS  &none
+                                 &to 0              &trans        &trans           &trans     &trans  &to 0
             >;
         };
 
