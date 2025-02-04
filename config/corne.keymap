@@ -66,6 +66,11 @@
             bindings = <&kp DELETE>;
             key-positions = <10 8>;
         };
+
+        dash {
+            bindings = <&kp MINUS>;
+            key-positions = <19 20>;
+        };
     };
 
     //
