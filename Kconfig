@@ -1,0 +1,11 @@
+menu "Corne Overlay Helpers"
+
+config ZMK_LAYER_OVERLAY_SERIAL
+    bool "Emit highest active layer over the Studio USB serial transport"
+    depends on ZMK_STUDIO_TRANSPORT_UART
+    help
+      Sends a compact line-based message over the same USB CDC ACM serial
+      endpoint used by the Studio UART transport. This is intended for a host
+      overlay app that redraws whenever the active layer changes.
+
+endmenu

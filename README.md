@@ -18,3 +18,15 @@ Want an easy way to customize the keymap?  I have a guide https://www.keyboardho
 How to switch bluetooth devices.
 
 ![bluetoothpair-guide](https://github.com/user-attachments/assets/d777bf4e-a7e3-4429-8638-2b11e7558153)
+
+## Layer Overlay Prototype
+
+This repo now includes a Windows USB overlay prototype in
+[`overlay/`](./overlay). It listens for layer-change messages from the
+left/central half and redraws a translucent floating Corne widget.
+
+Regenerate the layout data after editing the keymap with:
+
+```powershell
+python .\tools\generate_overlay_layout.py
+```

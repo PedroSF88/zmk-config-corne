@@ -1,0 +1,2 @@
+zephyr_library()
+zephyr_library_sources_ifdef(CONFIG_ZMK_LAYER_OVERLAY_SERIAL src/layer_overlay_serial.c)
