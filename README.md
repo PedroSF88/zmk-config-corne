@@ -22,15 +22,39 @@ How to switch bluetooth devices.
 ## Layer Overlay
 
 [`overlay/`](./overlay) has a small Windows widget that shows the keymap of
-the layer the keyboard is on and lights up keys as you type, over USB or
-Bluetooth. Double-click `overlay\Start-Overlay.cmd`. Details and limits:
+the layer the keyboard is on, lights up keys as you type on the Corne, and
+shows the left half's battery, over USB or Bluetooth. Double-click
+`overlay\Start-Overlay.cmd`. Details and limits:
 [`overlay/README.md`](./overlay/README.md).
 
 Layer keys in the keymap are `to_layerN` macros: they switch layer and tap
 F13+N so the overlay can follow. Keep that pattern when adding layer keys.
 
-Regenerate the overlay's layout data after editing the keymap with:
+The overlay picks up keymap edits by itself. To regenerate its layout data
+by hand:
 
 ```powershell
 python .\tools\generate_overlay_layout.py
 ```
+
+## Build and flash
+
+1. Push to GitHub. Actions builds the firmware (about 3 minutes).
+2. Download the build (the `firmware\` folder is not committed):
+
+   ```powershell
+   gh run download <run id> -D firmware\build-<run id>
+   ```
+
+3. Flash both halves from the same build. The script waits for the half,
+   checks it is the one you named (only the left firmware contains ZMK
+   Studio), copies the file, and confirms the half restarted:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File .\tools\Flash-Corne.ps1 -Half left
+   powershell -ExecutionPolicy Bypass -File .\tools\Flash-Corne.ps1 -Half right
+   ```
+
+   Bootloader mode: plug the half in by USB and double-tap its reset button.
+   If the halves stop talking to each other afterwards, flash `-Half reset`
+   on both, then the normal firmware again, and re-pair with the PC.

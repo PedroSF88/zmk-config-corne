@@ -303,3 +303,92 @@ public class CorneRawInput : NativeWindow, IDisposable {
         DestroyHandle();
     }
 }
+
+// Battery level Windows keeps for a Bluetooth LE device (the value shown in
+// Settings > Bluetooth & devices). For a ZMK split this is the central (left)
+// half. Read from the device's BTHLE\DEV_<mac> node.
+public static class CorneBattery {
+    [StructLayout(LayoutKind.Sequential)]
+    private struct DEVPROPKEY {
+        public Guid fmtid;
+        public uint pid;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct SP_DEVINFO_DATA {
+        public uint cbSize;
+        public Guid ClassGuid;
+        public uint DevInst;
+        public IntPtr Reserved;
+    }
+
+    [DllImport("setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr SetupDiGetClassDevs(IntPtr classGuid, string enumerator, IntPtr hwndParent, uint flags);
+
+    [DllImport("setupapi.dll", SetLastError = true)]
+    private static extern bool SetupDiEnumDeviceInfo(IntPtr set, uint index, ref SP_DEVINFO_DATA data);
+
+    [DllImport("setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool SetupDiGetDeviceInstanceId(IntPtr set, ref SP_DEVINFO_DATA data, StringBuilder id, int size, out int required);
+
+    [DllImport("setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool SetupDiGetDevicePropertyW(IntPtr set, ref SP_DEVINFO_DATA data, ref DEVPROPKEY key, out uint type, byte[] buffer, uint size, out uint required, uint flags);
+
+    [DllImport("setupapi.dll")]
+    private static extern bool SetupDiDestroyDeviceInfoList(IntPtr set);
+
+    private const uint DIGCF_ALLCLASSES = 0x4;
+    private static readonly Guid BatteryFmt = new Guid("104EA319-6EE2-4701-BD47-8DDBF425BBE5");    // pid 2: battery %
+    private static readonly Guid ConnectedFmt = new Guid("83DA6326-97A6-4088-9453-A1923F573B29");  // pid 15: connected
+
+    // Battery % of the Bluetooth LE device with this address (12 hex digits),
+    // or -1 when unknown or not connected.
+    public static int Read(string mac) {
+        if (String.IsNullOrEmpty(mac)) {
+            return -1;
+        }
+        IntPtr set = SetupDiGetClassDevs(IntPtr.Zero, "BTHLE", IntPtr.Zero, DIGCF_ALLCLASSES);
+        if (set == new IntPtr(-1)) {
+            return -1;
+        }
+        try {
+            for (uint i = 0; ; i++) {
+                SP_DEVINFO_DATA d = new SP_DEVINFO_DATA();
+                d.cbSize = (uint)Marshal.SizeOf(typeof(SP_DEVINFO_DATA));
+                if (!SetupDiEnumDeviceInfo(set, i, ref d)) {
+                    break;
+                }
+                StringBuilder id = new StringBuilder(512);
+                int required;
+                if (!SetupDiGetDeviceInstanceId(set, ref d, id, id.Capacity, out required)) {
+                    continue;
+                }
+                if (id.ToString().IndexOf("DEV_" + mac, StringComparison.OrdinalIgnoreCase) < 0) {
+                    continue;
+                }
+                byte[] connected = GetProperty(set, ref d, ConnectedFmt, 15);
+                if (connected == null || connected[0] == 0) {
+                    return -1;
+                }
+                byte[] level = GetProperty(set, ref d, BatteryFmt, 2);
+                return (level == null) ? -1 : level[0];
+            }
+        } finally {
+            SetupDiDestroyDeviceInfoList(set);
+        }
+        return -1;
+    }
+
+    private static byte[] GetProperty(IntPtr set, ref SP_DEVINFO_DATA d, Guid fmtid, uint pid) {
+        DEVPROPKEY key = new DEVPROPKEY();
+        key.fmtid = fmtid;
+        key.pid = pid;
+        byte[] buffer = new byte[16];
+        uint type;
+        uint required;
+        if (!SetupDiGetDevicePropertyW(set, ref d, ref key, out type, buffer, (uint)buffer.Length, out required, 0) || required == 0) {
+            return null;
+        }
+        return buffer;
+    }
+}

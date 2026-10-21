@@ -268,11 +268,15 @@ def parse(text):
 
 
 def main():
+    # optional: generate_overlay_layout.py [keymap_path] [output_path]
     repo_root = pathlib.Path(__file__).resolve().parents[1]
-    keymap_path = repo_root / "config" / "corne.keymap"
-    output_path = repo_root / "overlay" / "corne-layout.json"
+    keymap_path = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else repo_root / "config" / "corne.keymap"
+    output_path = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else repo_root / "overlay" / "corne-layout.json"
     layout = parse(read_text(keymap_path))
-    output_path.write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
+    # write then rename, so the overlay never reads a half-written file
+    temp_path = output_path.with_name(output_path.name + ".tmp")
+    temp_path.write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
+    temp_path.replace(output_path)
     print(f"Wrote {output_path}: {len(layout['layers'])} layers, "
           f"{len(layout['combos'])} combos, {len(layout['signals'])} layer signals")
     return 0

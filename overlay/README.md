@@ -1,9 +1,9 @@
 # Corne Layer Overlay
 
 A small always-on-top widget (Windows) that shows the Corne keymap for the
-layer the keyboard is on, and lights up keys as you press them on the Corne.
-Works over USB and Bluetooth. Click-through: it never takes focus or blocks
-the mouse.
+layer the keyboard is on, lights up keys as you press them on the Corne, and
+shows the left half's battery. Works over USB and Bluetooth. Click-through:
+it never takes focus or blocks the mouse.
 
 ## Run
 
@@ -18,7 +18,8 @@ BottomRight), `-Scale 1.2`, `-OverlayOpacity 0.8`, `-AllKeyboards` (light
 keys from every keyboard, not only the Corne; turns off layer guessing).
 
 Tray icon (right-click): hide/show, move to another corner, reset to Base,
-exit. Double-click the tray icon to hide/show. Only one copy runs at a time.
+exit. Double-click the tray icon to hide/show. Hover it for the battery
+level. Only one copy runs at a time.
 
 To start it with Windows: press Win+R, type `shell:startup`, and put a
 shortcut to `Start-Overlay.cmd` in that folder.
@@ -41,8 +42,14 @@ shortcut to `Start-Overlay.cmd` in that folder.
   layer (Shift-aware, so `=` and `+` light different keys). A keystroke that
   no key on the layer sends is matched to a combo; the combo's keys light up
   with its name in the top-right corner.
-- Everything it draws comes from `corne-layout.json`. After editing the
-  keymap, regenerate it: `python tools\generate_overlay_layout.py`.
+- Keymap edits show up by themselves: when `config/corne.keymap` is saved,
+  the overlay re-runs `tools/generate_overlay_layout.py` in the background
+  (needs Python) and reloads within about 2 seconds ("keymap updated"). If
+  the keymap has an error, it keeps the last good layout and shows the error.
+  The overlay updates before the keyboard does: flash the new firmware too.
+- Battery: the left half's level, as Windows reports it over Bluetooth
+  (the same value as Settings > Bluetooth & devices), checked every minute.
+  A tray notification warns at 20% and again at 10%.
 
 ## Test
 
@@ -66,6 +73,8 @@ overlay.
   as media keys, not keyboard keys).
 - Keymap changes made in ZMK Studio are not seen; the overlay shows the
   keymap from the repo.
+- Battery: only the left half, and only over Bluetooth. Windows does not
+  report the right half's battery.
 
 ## Unused
 
