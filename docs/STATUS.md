@@ -27,6 +27,9 @@ Inbox: empty
 
 ## Log
 
+- 2026-10-21 -- VS Code, Claude Opus 4.8. Added "Move widget" (tray): drops
+  click-through so the overlay can be dragged, and remembers its position
+  (restored next launch). Also made startup survive an abandoned lock. SelfTest 17/17.
 - 2026-10-21 -- VS Code, Claude Opus 4.8. Pushed `layer-overlay` and merged it
   into `master` on the fork (fast-forward). Added a Start Menu launch shortcut
   (Ctrl+Alt+C) and documented installing the overlay on another Windows PC.
