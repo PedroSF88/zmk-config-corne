@@ -19,13 +19,17 @@ How to switch bluetooth devices.
 
 ![bluetoothpair-guide](https://github.com/user-attachments/assets/d777bf4e-a7e3-4429-8638-2b11e7558153)
 
-## Layer Overlay Prototype
+## Layer Overlay
 
-This repo now includes a Windows USB overlay prototype in
-[`overlay/`](./overlay). It listens for layer-change messages from the
-left/central half and redraws a translucent floating Corne widget.
+[`overlay/`](./overlay) has a small Windows widget that shows the keymap of
+the layer the keyboard is on and lights up keys as you type, over USB or
+Bluetooth. Double-click `overlay\Start-Overlay.cmd`. Details and limits:
+[`overlay/README.md`](./overlay/README.md).
 
-Regenerate the layout data after editing the keymap with:
+Layer keys in the keymap are `to_layerN` macros: they switch layer and tap
+F13+N so the overlay can follow. Keep that pattern when adding layer keys.
+
+Regenerate the overlay's layout data after editing the keymap with:
 
 ```powershell
 python .\tools\generate_overlay_layout.py

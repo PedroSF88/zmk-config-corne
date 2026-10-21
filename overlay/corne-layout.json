@@ -1,290 +1,2056 @@
 {
-  "generated_from": "config/corne.keymap",
-  "layers": [
+ "generated_from": "config/corne.keymap",
+ "key_count": 42,
+ "signals": [
+  {
+   "layer": 0,
+   "vk": 124,
+   "key": "F13"
+  },
+  {
+   "layer": 1,
+   "vk": 125,
+   "key": "F14"
+  },
+  {
+   "layer": 2,
+   "vk": 126,
+   "key": "F15"
+  },
+  {
+   "layer": 3,
+   "vk": 127,
+   "key": "F16"
+  }
+ ],
+ "layers": [
+  {
+   "index": 0,
+   "node": "DEF",
+   "name": "Base",
+   "keys": [
     {
-      "index": 0,
-      "node": "DEF",
-      "name": "Base",
-      "rows": [
-        [
-          "",
-          "Q",
-          "W",
-          "E",
-          "R",
-          "T",
-          "Y",
-          "U",
-          "I",
-          "O",
-          "P",
-          ""
-        ],
-        [
-          "",
-          "A",
-          "S",
-          "D",
-          "F",
-          "G",
-          "H",
-          "J",
-          "K",
-          "L",
-          ";",
-          ""
-        ],
-        [
-          "",
-          "LSFT",
-          "Z",
-          "X",
-          "C",
-          "V",
-          "B",
-          "N",
-          "M",
-          ", / .",
-          "/",
-          ""
-        ],
-        [
-          "?",
-          "ENT",
-          "ENT",
-          "SPC",
-          "SPC",
-          "L1"
-        ]
-      ]
+     "label": "",
+     "vks": [],
+     "kind": "none"
     },
     {
-      "index": 1,
-      "node": "NAV",
-      "name": "NavNum",
-      "rows": [
-        [
-          "",
-          "L3",
-          "L2",
-          "VOL-",
-          "VOL-",
-          "PGUP",
-          "/",
-          "7",
-          "8",
-          "9",
-          "*",
-          ""
-        ],
-        [
-          "",
-          "TAB",
-          "HOME",
-          "UP",
-          "END",
-          "PGDN",
-          "=",
-          "4",
-          "5",
-          "6",
-          "+",
-          ""
-        ],
-        [
-          "",
-          "LSFT",
-          "LEFT",
-          "DOWN",
-          "RIGHT",
-          "DEL",
-          "0",
-          "1",
-          "2",
-          "3",
-          "-",
-          ""
-        ],
-        [
-          "L0",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "L0"
-        ]
-      ]
+     "label": "Q",
+     "vks": [
+      {
+       "vk": 81,
+       "shift": false
+      }
+     ],
+     "kind": "key"
     },
     {
-      "index": 2,
-      "node": "SYM",
-      "name": "Symbols",
-      "rows": [
-        [
-          "",
-          "F1",
-          "F2",
-          "F3",
-          "F4",
-          "LALT",
-          "@",
-          "#",
-          "$",
-          "%",
-          "&",
-          ""
-        ],
-        [
-          "",
-          "F5",
-          "F6",
-          "F7",
-          "F8",
-          "=",
-          "+",
-          "-",
-          "*",
-          "/",
-          ",",
-          ""
-        ],
-        [
-          "TRNS",
-          "F9",
-          "F10",
-          "F11",
-          "F12",
-          "2",
-          "[",
-          "(",
-          "|",
-          ")",
-          "]",
-          ""
-        ],
-        [
-          "L0",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "L0"
-        ]
-      ]
+     "label": "W",
+     "vks": [
+      {
+       "vk": 87,
+       "shift": false
+      }
+     ],
+     "kind": "key"
     },
     {
-      "index": 3,
-      "node": "ADJ",
-      "name": "System",
-      "rows": [
-        [
-          "",
-          "",
-          "CLR",
-          "CLR ALL",
-          "",
-          "STUDIO",
-          "F1",
-          "F2",
-          "F3",
-          "F4",
-          "RALT",
-          ""
-        ],
-        [
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "F5",
-          "F6",
-          "F7",
-          "F8",
-          "BOOT",
-          ""
-        ],
-        [
-          "",
-          "BT0",
-          "BT1",
-          "BT2",
-          "BT3",
-          "BT4",
-          "F9",
-          "F11",
-          "F11",
-          "F12",
-          "RSHIFT",
-          ""
-        ],
-        [
-          "L0",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "L0"
-        ]
-      ]
+     "label": "E",
+     "vks": [
+      {
+       "vk": 69,
+       "shift": false
+      }
+     ],
+     "kind": "key"
     },
     {
-      "index": 4,
-      "node": "EXTRA",
-      "name": "extra",
-      "rows": [
-        [
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS"
-        ],
-        [
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS"
-        ],
-        [
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "BOOT",
-          "TRNS"
-        ],
-        [
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS",
-          "TRNS"
-        ]
-      ]
+     "label": "R",
+     "vks": [
+      {
+       "vk": 82,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "T",
+     "vks": [
+      {
+       "vk": 84,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "Y",
+     "vks": [
+      {
+       "vk": 89,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "U",
+     "vks": [
+      {
+       "vk": 85,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "I",
+     "vks": [
+      {
+       "vk": 73,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "O",
+     "vks": [
+      {
+       "vk": 79,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "P",
+     "vks": [
+      {
+       "vk": 80,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "A",
+     "vks": [
+      {
+       "vk": 65,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "S",
+     "vks": [
+      {
+       "vk": 83,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "D",
+     "vks": [
+      {
+       "vk": 68,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F",
+     "vks": [
+      {
+       "vk": 70,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "G",
+     "vks": [
+      {
+       "vk": 71,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "H",
+     "vks": [
+      {
+       "vk": 72,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "J",
+     "vks": [
+      {
+       "vk": 74,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "K",
+     "vks": [
+      {
+       "vk": 75,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "L",
+     "vks": [
+      {
+       "vk": 76,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": ";",
+     "vks": [
+      {
+       "vk": 186,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "SHFT",
+     "vks": [
+      {
+       "vk": 160,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "Z",
+     "vks": [
+      {
+       "vk": 90,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "X",
+     "vks": [
+      {
+       "vk": 88,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "C",
+     "vks": [
+      {
+       "vk": 67,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "V",
+     "vks": [
+      {
+       "vk": 86,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "B",
+     "vks": [
+      {
+       "vk": 66,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "N",
+     "vks": [
+      {
+       "vk": 78,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "M",
+     "vks": [
+      {
+       "vk": 77,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": ", .",
+     "vks": [
+      {
+       "vk": 188,
+       "shift": false
+      },
+      {
+       "vk": 190,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "/",
+     "sub": "SHFT",
+     "vks": [
+      {
+       "vk": 191,
+       "shift": false
+      },
+      {
+       "vk": 161,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "?",
+     "sub": "ALT",
+     "vks": [
+      {
+       "vk": 191,
+       "shift": true
+      },
+      {
+       "vk": 164,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "NavNum",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
     }
-  ]
+   ]
+  },
+  {
+   "index": 1,
+   "node": "NAV",
+   "name": "NavNum",
+   "keys": [
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "System",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    },
+    {
+     "label": "Symbols",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    },
+    {
+     "label": "VOL-",
+     "vks": [
+      {
+       "vk": 174,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "VOL-",
+     "vks": [
+      {
+       "vk": 174,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "PGUP",
+     "vks": [
+      {
+       "vk": 33,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "/",
+     "vks": [
+      {
+       "vk": 191,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "7",
+     "vks": [
+      {
+       "vk": 55,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "8",
+     "vks": [
+      {
+       "vk": 56,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "9",
+     "vks": [
+      {
+       "vk": 57,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "*",
+     "vks": [
+      {
+       "vk": 56,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "TAB",
+     "vks": [
+      {
+       "vk": 9,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "HOME",
+     "vks": [
+      {
+       "vk": 36,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "UP",
+     "vks": [
+      {
+       "vk": 38,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "END",
+     "vks": [
+      {
+       "vk": 35,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "PGDN",
+     "vks": [
+      {
+       "vk": 34,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "=",
+     "vks": [
+      {
+       "vk": 187,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "4",
+     "vks": [
+      {
+       "vk": 52,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "5",
+     "vks": [
+      {
+       "vk": 53,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "6",
+     "vks": [
+      {
+       "vk": 54,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "+",
+     "vks": [
+      {
+       "vk": 187,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "SHFT",
+     "vks": [
+      {
+       "vk": 160,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "LEFT",
+     "vks": [
+      {
+       "vk": 37,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "DOWN",
+     "vks": [
+      {
+       "vk": 40,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "RIGHT",
+     "vks": [
+      {
+       "vk": 39,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "DEL",
+     "vks": [
+      {
+       "vk": 46,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "0",
+     "vks": [
+      {
+       "vk": 48,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "1",
+     "vks": [
+      {
+       "vk": 49,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "2",
+     "vks": [
+      {
+       "vk": 50,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "3",
+     "vks": [
+      {
+       "vk": 51,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "-",
+     "sub": "SHFT",
+     "vks": [
+      {
+       "vk": 189,
+       "shift": false
+      },
+      {
+       "vk": 161,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "Base",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "Base",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "node": "SYM",
+   "name": "Symbols",
+   "keys": [
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "F1",
+     "vks": [
+      {
+       "vk": 112,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F2",
+     "vks": [
+      {
+       "vk": 113,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F3",
+     "vks": [
+      {
+       "vk": 114,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F4",
+     "vks": [
+      {
+       "vk": 115,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "ALT",
+     "vks": [
+      {
+       "vk": 164,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "@",
+     "vks": [
+      {
+       "vk": 50,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "#",
+     "vks": [
+      {
+       "vk": 51,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "$",
+     "vks": [
+      {
+       "vk": 52,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "%",
+     "vks": [
+      {
+       "vk": 53,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "&",
+     "vks": [
+      {
+       "vk": 55,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "F5",
+     "vks": [
+      {
+       "vk": 116,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F6",
+     "vks": [
+      {
+       "vk": 117,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F7",
+     "vks": [
+      {
+       "vk": 118,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F8",
+     "vks": [
+      {
+       "vk": 119,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "=",
+     "vks": [
+      {
+       "vk": 187,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "+",
+     "vks": [
+      {
+       "vk": 187,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "-",
+     "vks": [
+      {
+       "vk": 189,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "*",
+     "vks": [
+      {
+       "vk": 56,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "/",
+     "vks": [
+      {
+       "vk": 191,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": ",",
+     "vks": [
+      {
+       "vk": 188,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "F9",
+     "vks": [
+      {
+       "vk": 120,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F10",
+     "vks": [
+      {
+       "vk": 121,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F11",
+     "vks": [
+      {
+       "vk": 122,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F12",
+     "vks": [
+      {
+       "vk": 123,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "2",
+     "vks": [
+      {
+       "vk": 50,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "[",
+     "vks": [
+      {
+       "vk": 219,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "(",
+     "vks": [
+      {
+       "vk": 57,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "|",
+     "vks": [
+      {
+       "vk": 220,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": ")",
+     "vks": [
+      {
+       "vk": 48,
+       "shift": true
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "]",
+     "vks": [
+      {
+       "vk": 221,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "Base",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "Base",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "node": "ADJ",
+   "name": "System",
+   "keys": [
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "BT CLR",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "CLR ALL",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "UNLOCK",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "F1",
+     "vks": [
+      {
+       "vk": 112,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F2",
+     "vks": [
+      {
+       "vk": 113,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F3",
+     "vks": [
+      {
+       "vk": 114,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F4",
+     "vks": [
+      {
+       "vk": 115,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "ALTGR",
+     "vks": [
+      {
+       "vk": 165,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "F5",
+     "vks": [
+      {
+       "vk": 116,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F6",
+     "vks": [
+      {
+       "vk": 117,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F7",
+     "vks": [
+      {
+       "vk": 118,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F8",
+     "vks": [
+      {
+       "vk": 119,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "BOOT",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "BT0",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "BT1",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "BT2",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "BT3",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "BT4",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "F9",
+     "vks": [
+      {
+       "vk": 120,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F11",
+     "vks": [
+      {
+       "vk": 122,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F11",
+     "vks": [
+      {
+       "vk": 122,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "F12",
+     "vks": [
+      {
+       "vk": 123,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "SHFT",
+     "vks": [
+      {
+       "vk": 161,
+       "shift": false
+      }
+     ],
+     "kind": "key"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "none"
+    },
+    {
+     "label": "Base",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "Base",
+     "sub": "layer",
+     "vks": [],
+     "kind": "layer"
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "node": "EXTRA",
+   "name": "extra",
+   "keys": [
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "Q",
+     "vks": [
+      {
+       "vk": 81,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "W",
+     "vks": [
+      {
+       "vk": 87,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "E",
+     "vks": [
+      {
+       "vk": 69,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "R",
+     "vks": [
+      {
+       "vk": 82,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "T",
+     "vks": [
+      {
+       "vk": 84,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "Y",
+     "vks": [
+      {
+       "vk": 89,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "U",
+     "vks": [
+      {
+       "vk": 85,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "I",
+     "vks": [
+      {
+       "vk": 73,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "O",
+     "vks": [
+      {
+       "vk": 79,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "P",
+     "vks": [
+      {
+       "vk": 80,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "A",
+     "vks": [
+      {
+       "vk": 65,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "S",
+     "vks": [
+      {
+       "vk": 83,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "D",
+     "vks": [
+      {
+       "vk": 68,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "F",
+     "vks": [
+      {
+       "vk": 70,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "G",
+     "vks": [
+      {
+       "vk": 71,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "H",
+     "vks": [
+      {
+       "vk": 72,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "J",
+     "vks": [
+      {
+       "vk": 74,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "K",
+     "vks": [
+      {
+       "vk": 75,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "L",
+     "vks": [
+      {
+       "vk": 76,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": ";",
+     "vks": [
+      {
+       "vk": 186,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "SHFT",
+     "vks": [
+      {
+       "vk": 160,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "Z",
+     "vks": [
+      {
+       "vk": 90,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "X",
+     "vks": [
+      {
+       "vk": 88,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "C",
+     "vks": [
+      {
+       "vk": 67,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "V",
+     "vks": [
+      {
+       "vk": 86,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "B",
+     "vks": [
+      {
+       "vk": 66,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "N",
+     "vks": [
+      {
+       "vk": 78,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "M",
+     "vks": [
+      {
+       "vk": 77,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": ", .",
+     "vks": [
+      {
+       "vk": 188,
+       "shift": false
+      },
+      {
+       "vk": 190,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "BOOT",
+     "vks": [],
+     "kind": "system"
+    },
+    {
+     "label": "",
+     "vks": [],
+     "kind": "trans"
+    },
+    {
+     "label": "?",
+     "vks": [
+      {
+       "vk": 191,
+       "shift": true
+      },
+      {
+       "vk": 164,
+       "shift": false
+      }
+     ],
+     "kind": "trans",
+     "sub": "ALT"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "ENT",
+     "vks": [
+      {
+       "vk": 13,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "SPC",
+     "vks": [
+      {
+       "vk": 32,
+       "shift": false
+      }
+     ],
+     "kind": "trans"
+    },
+    {
+     "label": "NavNum",
+     "vks": [],
+     "kind": "trans",
+     "sub": "layer"
+    }
+   ]
+  }
+ ],
+ "combos": [
+  {
+   "name": "escape",
+   "positions": [
+    13,
+    29
+   ],
+   "layers": null,
+   "label": "ESC",
+   "vks": [
+    {
+     "vk": 27,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "CtrlAltDel",
+   "positions": [
+    3,
+    2,
+    16
+   ],
+   "layers": null,
+   "label": "C+A+DEL",
+   "vks": [
+    {
+     "vk": 46,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "RCtrl",
+   "positions": [
+    8,
+    9
+   ],
+   "layers": [
+    0
+   ],
+   "label": "CTRL",
+   "vks": [
+    {
+     "vk": 163,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "RCommand",
+   "positions": [
+    19,
+    22
+   ],
+   "layers": null,
+   "label": "WIN",
+   "vks": [
+    {
+     "vk": 92,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "Aposthrophe",
+   "positions": [
+    21,
+    22
+   ],
+   "layers": null,
+   "label": "'",
+   "vks": [
+    {
+     "vk": 222,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "backspace",
+   "positions": [
+    10,
+    9
+   ],
+   "layers": null,
+   "label": "BSPC",
+   "vks": [
+    {
+     "vk": 8,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "Tab",
+   "positions": [
+    16,
+    14
+   ],
+   "layers": null,
+   "label": "TAB",
+   "vks": [
+    {
+     "vk": 9,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "del",
+   "positions": [
+    10,
+    8
+   ],
+   "layers": null,
+   "label": "DEL",
+   "vks": [
+    {
+     "vk": 46,
+     "shift": false
+    }
+   ]
+  },
+  {
+   "name": "dash",
+   "positions": [
+    19,
+    20
+   ],
+   "layers": null,
+   "label": "-",
+   "vks": [
+    {
+     "vk": 189,
+     "shift": false
+    }
+   ]
+  }
+ ]
 }

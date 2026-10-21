@@ -1,44 +1,56 @@
 # Corne Layer Overlay
 
-This is a Windows-only first-pass overlay that talks to the left half over USB
-serial and redraws a translucent Corne widget.
+A small always-on-top widget (Windows) that shows the Corne keymap for the
+layer the keyboard is on, and lights up keys as you press them. Works over
+USB and Bluetooth. Click-through: it never takes focus or blocks the mouse.
 
 ## Run
+
+Double-click `Start-Overlay.cmd`, or:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\overlay\Start-LayerOverlay.ps1
 ```
 
-To test only the live keymap fetch without starting the overlay:
+Options: `-Anchor TopLeft|TopRight|BottomLeft|BottomRight` (default
+BottomRight), `-Scale 1.2`, `-OverlayOpacity 0.8`.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\overlay\Test-DeviceKeymap.ps1
-```
+Tray icon (right-click): hide/show, move to another corner, reset to Base,
+exit. Double-click the tray icon to hide/show. Only one copy runs at a time.
 
-By default the script stays dormant until it detects the left/central Corne USB
-serial device and confirms the keyboard name is `CorneWireless2`. On connect it
-tries to load the live keymap from the device through ZMK Studio RPC. If Studio
-is locked, it keeps using the repo-generated layout and retries every few
-seconds after you press your Studio Unlock key. If you want to pin it to a
-specific port, pass `-PortName COM4`.
+To start it with Windows: press Win+R, type `shell:startup`, and put a
+shortcut to `Start-Overlay.cmd` in that folder.
 
-## Layer Change Message Format
+## How it works
 
-The future overlay firmware emits lines like this when the highest active layer
-changes:
+- Layer tracking: every layer key in `config/corne.keymap` is a `to_layerN`
+  macro that switches layer and taps F13+N (F13 = Base ... F16 = System).
+  The overlay catches F13-F16 with a low-level keyboard hook and swallows
+  them, so other apps never see them. This needs the firmware built from this
+  keymap on the LEFT half.
+- Key lighting: every keystroke Windows receives is matched to its position
+  on the current layer (Shift-aware, so `=` and `+` light different keys).
+  A keystroke that no key on the layer sends is matched to a combo, and the
+  combo's keys light up with its name in the top-right corner.
+- Everything it draws comes from `corne-layout.json`. After editing the
+  keymap, regenerate it: `python tools\generate_overlay_layout.py`.
 
-```text
-ZMK_OVERLAY|LAYER|1|NavNum
-```
+## Limits
 
-## Notes
+- The overlay starts on Base. If the keyboard is on another layer when the
+  overlay starts, or the keyboard wakes from deep sleep (which resets it to
+  Base), the overlay is in sync again after the next layer key. Tray ->
+  "Reset to Base" also fixes it.
+- Key lighting comes from what Windows receives, so the laptop's own
+  keyboard lights keys too, and keys that send nothing to the PC (Bluetooth,
+  bootloader, Studio unlock) never light.
+- Keymap changes made in ZMK Studio are not seen; the overlay shows the
+  keymap from the repo.
 
-- This first version is USB-only.
-- It uses the same CDC ACM serial endpoint as the Studio UART transport, so do
-  not use it at the same time as ZMK Studio over USB.
-- The overlay first tries to load the keymap from the device. The generated
-  `overlay/corne-layout.json` file is the fallback when the device is locked or
-  unavailable.
-- When no matching Corne keyboard is detected, the overlay remains hidden.
-- When the keyboard is detected, the overlay opens on the top/default layer and
-  then updates only when a layer-change message arrives.
+## Unused
+
+`src/`, `Kconfig` and `CMakeLists.txt` are the earlier USB-serial approach
+(firmware prints layer changes on the Studio serial port). They are no longer
+built (`zephyr/module.yml` does not load them) and can be deleted. Same for
+`overlay/CorneStudioRpc.ps1` and `overlay/Test-DeviceKeymap.ps1` (read the
+live keymap over the USB Studio connection; the overlay no longer uses them).
