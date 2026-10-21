@@ -1,9 +1,9 @@
 # Corne Layer Overlay
 
 A small always-on-top widget (Windows) that shows the Corne keymap for the
-layer the keyboard is on, lights up keys as you press them on the Corne, and
-shows the left half's battery. Works over USB and Bluetooth. Click-through:
-it never takes focus or blocks the mouse.
+layer the keyboard is on, lights up keys as you press them on the Corne,
+shows its combos, and shows both halves' battery. Works over USB and
+Bluetooth. Click-through: it never takes focus or blocks the mouse.
 
 ## Run
 
@@ -42,18 +42,23 @@ shortcut to `Start-Overlay.cmd` in that folder.
   layer (Shift-aware, so `=` and `+` light different keys). A keystroke that
   no key on the layer sends is matched to a combo; the combo's keys light up
   with its name in the top-right corner.
-- Combos on the map: each combo active on the shown layer is a small label
-  between its keys (dashed lines to the keys when they are not side by
-  side). The label lights up when you use the combo. Tray -> "Show combos"
-  turns them off.
+- Combos on the map (only those active on the shown layer). Two keys side
+  by side: a small label in the gap between them (BSPC between O and P).
+  Keys further apart: a small tag with the combo's name on each of its keys
+  (ESC on A and on V). Labels and tags light up when you use the combo.
+  Tray -> "Show combos" turns them off.
 - Keymap edits show up by themselves: when `config/corne.keymap` is saved,
   the overlay re-runs `tools/generate_overlay_layout.py` in the background
   (needs Python) and reloads within about 2 seconds ("keymap updated"). If
   the keymap has an error, it keeps the last good layout and shows the error.
   The overlay updates before the keyboard does: flash the new firmware too.
-- Battery: the left half's level, as Windows reports it over Bluetooth
-  (the same value as Settings > Bluetooth & devices), checked every minute.
-  A tray notification warns at 20% and again at 10%.
+- Battery, both halves: read from the keyboard over Bluetooth every minute
+  (every 5 s while it cannot be read), on a separate thread so typing is
+  never held up. The left half reports its own level and passes on the
+  right half's (`config/corne.conf`). "--" means not known right now, e.g.
+  while a half restarts. A tray notification warns at 20% and again at 10%
+  for each half. If the Bluetooth read fails, the left level falls back to
+  what Windows shows in Settings.
 
 ## Test
 
@@ -66,6 +71,13 @@ signals, combos, transparent keys, Shift) and prints PASS/FAIL per step. It
 includes a baseline: with guessing off, the same keystroke must not move the
 overlay.
 
+```powershell
+powershell -ExecutionPolicy Bypass -File .\overlay\Start-LayerOverlay.ps1 -BatteryTest
+```
+
+Reads both halves' battery once, the same way the overlay does, and prints
+it next to what Windows shows. Use it when a battery level is missing.
+
 ## Limits
 
 - Without the layer signal (old firmware), the overlay only changes layer
@@ -77,8 +89,8 @@ overlay.
   as media keys, not keyboard keys).
 - Keymap changes made in ZMK Studio are not seen; the overlay shows the
   keymap from the repo.
-- Battery: only the left half, and only over Bluetooth. Windows does not
-  report the right half's battery.
+- Battery: only over Bluetooth. The right half's level needs the left half
+  flashed with this repo's firmware (it passes the level on).
 
 ## Unused
 

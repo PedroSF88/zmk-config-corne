@@ -12,7 +12,9 @@
     # Light keys from every keyboard instead of only the Corne (no layer guessing)
     [switch]$AllKeyboards,
     # Feed scripted keystrokes through the key handling, print PASS/FAIL, exit
-    [switch]$SelfTest
+    [switch]$SelfTest,
+    # Read both halves' battery once over Bluetooth, print it, exit
+    [switch]$BatteryTest
 )
 
 # Corne layer overlay.
@@ -128,6 +130,8 @@ $fontSub = New-Object System.Drawing.Font('Segoe UI', (P 6), [System.Drawing.Fon
 $fontLayer = New-Object System.Drawing.Font('Segoe UI Semibold', (P 11), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
 $fontInfo = New-Object System.Drawing.Font('Segoe UI', (P 8.5), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
 $fontCombo = New-Object System.Drawing.Font('Segoe UI Semibold', (P 6.5), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
+$fontTag = New-Object System.Drawing.Font('Segoe UI Semibold', (P 5.5), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
+$colorTag = New-Color 150 170 205   # combo tags on keys
 $centered = New-Object System.Drawing.StringFormat
 $centered.Alignment = [System.Drawing.StringAlignment]::Center
 $centered.LineAlignment = [System.Drawing.StringAlignment]::Center
@@ -153,95 +157,99 @@ function Get-RectCenter([System.Drawing.RectangleF]$r) {
     return New-Object System.Drawing.PointF(($r.X + $r.Width / 2), ($r.Y + $r.Height / 2))
 }
 
-# Point where a line from the centre of $r towards $toward leaves $r.
-function Get-EdgePoint([System.Drawing.RectangleF]$r, [System.Drawing.PointF]$toward) {
-    $c = Get-RectCenter $r
-    $dx = $toward.X - $c.X
-    $dy = $toward.Y - $c.Y
-    if ($dx -eq 0 -and $dy -eq 0) { return $c }
-    $sx = if ($dx -ne 0) { ($r.Width / 2) / [Math]::Abs($dx) } else { [double]::MaxValue }
-    $sy = if ($dy -ne 0) { ($r.Height / 2) / [Math]::Abs($dy) } else { [double]::MaxValue }
-    $t = [Math]::Min(1.0, [Math]::Min($sx, $sy))
-    return New-Object System.Drawing.PointF(($c.X + $dx * $t), ($c.Y + $dy * $t))
+# "L [###] 92%" in the header, ending at x = $right; "--" while unknown.
+# Returns its left edge, so the next item can go to its left.
+function Draw-Battery($g, [string]$side, [int]$level, [float]$right) {
+    $labelBrush = New-Object System.Drawing.SolidBrush($colorTextDim)
+    $outline = New-Object System.Drawing.Pen($colorTextDim, [float](S 1))
+    try {
+        $text = if ($level -ge 0) { "$level%" } else { '--' }
+        $y = $margin + (S 4)
+        $textX = $right - $g.MeasureString($text, $fontInfo).Width
+        $g.DrawString($text, $fontInfo, $labelBrush, $textX, $y)
+        $bw = S 18
+        $bh = S 9
+        $bx = $textX - (S 5) - $bw
+        $by = $margin + (S 9)
+        $g.DrawRectangle($outline, $bx, $by, $bw, $bh)
+        $g.FillRectangle($labelBrush, ($bx + $bw), ($by + $bh * 0.3), (S 2), ($bh * 0.4))
+        if ($level -ge 0) {
+            $color = if ($level -lt 20) { $script:LayerAccents[3] } elseif ($level -lt 50) { New-Color 230 180 60 } else { $script:LayerAccents[1] }
+            $fill = New-Object System.Drawing.SolidBrush($color)
+            $g.FillRectangle($fill, ($bx + (S 1.5)), ($by + (S 1.5)), [float][Math]::Max(1, ($bw - (S 3)) * $level / 100), ($bh - (S 3)))
+            $fill.Dispose()
+        }
+        $sideX = $bx - (S 2) - $g.MeasureString($side, $fontInfo).Width
+        $g.DrawString($side, $fontInfo, $labelBrush, $sideX, $y)
+        return $sideX
+    } finally {
+        $labelBrush.Dispose()
+        $outline.Dispose()
+    }
 }
 
-# Combos drawn on the map: a small label between the keys that make the
-# combo, with dashed lines to the keys when they are not side by side.
-# The label lights up while the combo is pressed.
+# Combos on the map. Two keys side by side: a small label in the gap between
+# them. Keys further apart: a small tag with the combo's name on each of its
+# keys (no lines). Labels and tags light up while the combo is pressed.
 function Draw-Combos($g, [System.Drawing.Color]$accent) {
-    $placed = New-Object System.Collections.ArrayList
-    $linePen = New-Object System.Drawing.Pen(([System.Drawing.Color]::FromArgb(170, $colorTextDim.R, $colorTextDim.G, $colorTextDim.B)), [float](S 1))
-    $linePen.DashStyle = [System.Drawing.Drawing2D.DashStyle]::Dash
+    $tags = @{}   # position -> list of @{ Label; Lit }
     $pillFill = New-Object System.Drawing.SolidBrush($colorBackground)
     $pillPen = New-Object System.Drawing.Pen($colorTextDim, [float](S 1))
     $litFill = New-Object System.Drawing.SolidBrush($accent)
     $litPen = New-Object System.Drawing.Pen($accent, [float](S 1))
     $textBrush = New-Object System.Drawing.SolidBrush($colorText)
     $darkBrush = New-Object System.Drawing.SolidBrush($colorBackground)
+    $tagBrush = New-Object System.Drawing.SolidBrush($colorTag)
+    $tagFormat = New-Object System.Drawing.StringFormat
+    $tagFormat.FormatFlags = [System.Drawing.StringFormatFlags]::NoWrap
     try {
         foreach ($combo in $layout.combos) {
             if ($null -ne $combo.layers -and -not ($combo.layers -contains $script:Layer)) { continue }
             $positions = @($combo.positions | ForEach-Object { [int]$_ } | Where-Object { $script:KeyRects.ContainsKey($_) } | Sort-Object)
             if ($positions.Count -lt 2) { continue }
-            $rects = @($positions | ForEach-Object { $script:KeyRects[$_] })
-            $cx = 0.0
-            $cy = 0.0
-            foreach ($r in $rects) {
-                $c = Get-RectCenter $r
-                $cx += $c.X
-                $cy += $c.Y
-            }
-            $cx /= $rects.Count
-            $cy /= $rects.Count
-
             $label = [string]$combo.label
+            $isLit = $script:LitCombos.ContainsKey([string]$combo.name)
+
+            # side by side: neighbours in one row, or in one column (12 positions apart)
+            $sideBySide = ($positions.Count -eq 2) -and ($positions[1] -lt 36) -and (
+                (($positions[1] - $positions[0] -eq 1) -and ([Math]::Floor($positions[0] / 12) -eq [Math]::Floor($positions[1] / 12))) -or
+                ($positions[1] - $positions[0] -eq 12))
+            if (-not $sideBySide) {
+                foreach ($pos in $positions) {
+                    if (-not $tags.ContainsKey($pos)) { $tags[$pos] = New-Object System.Collections.ArrayList }
+                    [void]$tags[$pos].Add(@{ Label = $label; Lit = $isLit })
+                }
+                continue
+            }
+
+            $a = Get-RectCenter $script:KeyRects[$positions[0]]
+            $b = Get-RectCenter $script:KeyRects[$positions[1]]
             $size = $g.MeasureString($label, $fontCombo)
             $h = $size.Height + (S 1)
             $w = [Math]::Max($size.Width + (S 4), $h)
-
-            # two keys side by side in one row: the label sits in the gap between them
-            $adjacent = ($positions.Count -eq 2) -and ($positions[1] - $positions[0] -eq 1) -and
-                ([Math]::Floor($positions[0] / 12) -eq [Math]::Floor($positions[1] / 12)) -and ($positions[1] -lt 36)
-            if (-not $adjacent) {
-                # otherwise on the row gap next to the key nearest the middle of the combo
-                $nearest = $null
-                $best = [double]::MaxValue
-                foreach ($r in $script:KeyRects.Values) {
-                    $c = Get-RectCenter $r
-                    $d = ($c.X - $cx) * ($c.X - $cx) + ($c.Y - $cy) * ($c.Y - $cy)
-                    if ($d -lt $best) { $best = $d; $nearest = $r }
-                }
-                $cy = if ($cy -ge (Get-RectCenter $nearest).Y) { $nearest.Bottom + $gap / 2 } else { $nearest.Top - $gap / 2 }
-            }
-
-            # slide sideways until it does not cover another combo label
-            $rect = $null
-            foreach ($slide in @(0, 1, -1, 2, -2, 3, -3)) {
-                $candidate = New-Object System.Drawing.RectangleF(($cx - $w / 2 + $slide * ($w / 2 + (S 8))), ($cy - $h / 2), $w, $h)
-                $free = $true
-                foreach ($other in $placed) {
-                    if ($candidate.IntersectsWith($other)) { $free = $false; break }
-                }
-                if ($free) { $rect = $candidate; break }
-            }
-            if (-not $rect) { $rect = New-Object System.Drawing.RectangleF(($cx - $w / 2), ($cy - $h / 2), $w, $h) }
-            [void]$placed.Add($rect)
-
-            $isLit = $script:LitCombos.ContainsKey([string]$combo.name)
-            if (-not $adjacent) {
-                $mid = Get-RectCenter $rect
-                foreach ($r in $rects) {
-                    $g.DrawLine($(if ($isLit) { $litPen } else { $linePen }), (Get-EdgePoint $rect (Get-RectCenter $r)), (Get-EdgePoint $r $mid))
-                }
-            }
+            $rect = New-Object System.Drawing.RectangleF((($a.X + $b.X) / 2 - $w / 2), (($a.Y + $b.Y) / 2 - $h / 2), $w, $h)
             $path = New-RoundedPath $rect ($h / 2)
             $g.FillPath($(if ($isLit) { $litFill } else { $pillFill }), $path)
             $g.DrawPath($(if ($isLit) { $litPen } else { $pillPen }), $path)
             $path.Dispose()
             $g.DrawString($label, $fontCombo, $(if ($isLit) { $darkBrush } else { $textBrush }), $rect, $centered)
         }
+
+        # tags go in the key's corners: top-left, bottom-left, top-right, bottom-right
+        foreach ($pos in $tags.Keys) {
+            $r = $script:KeyRects[$pos]
+            $keyLit = $script:Lit.ContainsKey($pos)
+            $i = 0
+            foreach ($tag in $tags[$pos]) {
+                $size = $g.MeasureString($tag.Label, $fontTag)
+                $x = if ($i -lt 2) { $r.X + (S 3) } else { $r.Right - (S 3) - $size.Width }
+                $y = if ($i % 2 -eq 0) { $r.Y + (S 1) } else { $r.Bottom - (S 1) - $size.Height }
+                $g.DrawString($tag.Label, $fontTag, $(if ($keyLit -or $tag.Lit) { $darkBrush } else { $tagBrush }), [float]$x, [float]$y, $tagFormat)
+                $i++
+            }
+        }
     } finally {
-        foreach ($o in @($linePen, $pillFill, $pillPen, $litFill, $litPen, $textBrush, $darkBrush)) { $o.Dispose() }
+        foreach ($o in @($pillFill, $pillPen, $litFill, $litPen, $textBrush, $darkBrush, $tagBrush, $tagFormat)) { $o.Dispose() }
     }
 }
 
@@ -263,10 +271,13 @@ $script:Generator = $null          # running layout generator process, if any
 $script:GeneratorFor = $null       # keymap timestamp it is generating from
 $script:FailedKeymapStamp = $null  # keymap timestamp the generator failed on
 $script:GeneratedFor = $null       # keymap timestamp the shown layout was made from
-$script:Battery = -1               # left half battery %, -1 = unknown / not on Bluetooth
-$script:BatteryMac = $null         # the Corne's Bluetooth address, from its raw input name
-$script:BatteryWarned = 100        # lowest threshold already warned about
-$script:NextBatteryCheck = [DateTime]::UtcNow
+$script:BatteryLeft = -1           # battery %, -1 = unknown / not connected
+$script:BatteryRight = -1
+$script:BatteryWarned = @{ Left = 100; Right = 100 }   # lowest threshold already warned about
+$script:BatteryStamp = 0           # last battery worker reading that was shown
+$script:NextMacCheck = [DateTime]::UtcNow
+# shared with the battery worker thread (started with the window)
+$script:BatterySync = [hashtable]::Synchronized(@{ Mac = $null; Left = -1; Right = -1; Stamp = 0; Stop = $false; Error = $null })
 if ((Test-Path $KeymapPath) -and (Get-Item $KeymapPath).LastWriteTimeUtc -le $script:LayoutStamp) {
     $script:GeneratedFor = (Get-Item $KeymapPath).LastWriteTimeUtc   # layout already up to date
 }
@@ -387,36 +398,134 @@ function Update-LayoutFromFiles {
     return $false
 }
 
-# Battery of the left (central) half, as Windows reports it over Bluetooth.
-# Checked once a minute; warns in the tray at 20% and again at 10%.
-# Returns $true when the overlay must redraw.
+# Battery of both halves. A worker thread reads them from the keyboard over
+# Bluetooth (Start-BatteryWorker); this shows what it found and warns in the
+# tray at 20% and again at 10%. Returns $true when the overlay must redraw.
 function Update-Battery {
     $now = [DateTime]::UtcNow
-    if ($now -lt $script:NextBatteryCheck) { return $false }
-    $script:NextBatteryCheck = $now.AddSeconds(60)
-
-    if (-not $script:BatteryMac) {
+    if (-not $script:BatterySync.Mac -and $now -ge $script:NextMacCheck) {
+        # the Corne's Bluetooth address, from its raw input device name
+        $script:NextMacCheck = $now.AddSeconds(5)
         foreach ($name in [CorneRawInput]::KeyboardNames()) {
             if ($name -match $DevicePattern -and $name -match '_([0-9a-f]{12})&col') {
-                $script:BatteryMac = $Matches[1]
-                break
+                $script:BatterySync.Mac = $Matches[1]
+                return $true
             }
         }
     }
-    $level = [CorneBattery]::Read($script:BatteryMac)
-    if ($level -eq $script:Battery) { return $false }
-    $script:Battery = $level
+    if ($script:BatterySync.Stamp -eq $script:BatteryStamp) { return $false }
+    $script:BatteryStamp = $script:BatterySync.Stamp
+    $left = [int]$script:BatterySync.Left
+    $right = [int]$script:BatterySync.Right
+    if ($left -lt 0 -and $script:BatterySync.Mac) {
+        $left = [CorneBattery]::Read($script:BatterySync.Mac)   # fall back to what Windows shows
+    }
+    $script:BatteryLeft = $left
+    $script:BatteryRight = $right
 
-    $tray.Text = if ($level -ge 0) { "Corne overlay - left half battery $level%" } else { 'Corne layer overlay' }
+    $parts = @()
+    if ($left -ge 0) { $parts += "L $left%" }
+    if ($right -ge 0) { $parts += "R $right%" }
+    $tray.Text = if ($parts.Count -gt 0) { 'Corne battery: ' + ($parts -join '  ') } else { 'Corne layer overlay' }
+    Test-BatteryLow 'Left' $left
+    Test-BatteryLow 'Right' $right
+    return $true
+}
+
+function Test-BatteryLow([string]$side, [int]$level) {
+    $warned = $script:BatteryWarned[$side]
     foreach ($threshold in @(10, 20)) {
-        if ($level -ge 0 -and $level -le $threshold -and $script:BatteryWarned -gt $threshold) {
-            $script:BatteryWarned = $threshold
-            $tray.ShowBalloonTip(8000, 'Corne battery low', "Left half at $level%. Plug it in to charge.", [System.Windows.Forms.ToolTipIcon]::Warning)
-            break
+        if ($level -ge 0 -and $level -le $threshold -and $warned -gt $threshold) {
+            $script:BatteryWarned[$side] = $threshold
+            $tray.ShowBalloonTip(8000, 'Corne battery low', "$side half at $level%. Plug it in to charge.", [System.Windows.Forms.ToolTipIcon]::Warning)
+            return
         }
     }
-    if ($level -gt $script:BatteryWarned + 5) { $script:BatteryWarned = 100 }   # charged again: re-arm
-    return $true
+    if ($level -gt $warned + 5) { $script:BatteryWarned[$side] = 100 }   # charged again: re-arm
+}
+
+# Battery worker: its own thread, because Bluetooth reads can take seconds and
+# the main thread also runs the keyboard hook. Reads every Battery Level value
+# the keyboard offers: the plain one is the left half; the one described
+# "Peripheral 0" is the right half (the left half passes it on; see
+# config/corne.conf). Results go to $script:BatterySync for Update-Battery.
+function Start-BatteryWorker {
+    $worker = [powershell]::Create()
+    [void]$worker.AddScript({
+            param($sync)
+            try {
+                Add-Type -AssemblyName System.Runtime.WindowsRuntime
+                $null = [Windows.Devices.Bluetooth.BluetoothLEDevice, Windows.Devices.Bluetooth, ContentType = WindowsRuntime]
+                $null = [Windows.Devices.Bluetooth.GenericAttributeProfile.GattDeviceServicesResult, Windows.Devices.Bluetooth, ContentType = WindowsRuntime]
+                $null = [Windows.Devices.Bluetooth.GenericAttributeProfile.GattCharacteristicsResult, Windows.Devices.Bluetooth, ContentType = WindowsRuntime]
+                $null = [Windows.Devices.Bluetooth.GenericAttributeProfile.GattReadResult, Windows.Devices.Bluetooth, ContentType = WindowsRuntime]
+                $null = [Windows.Storage.Streams.IBuffer, Windows.Storage.Streams, ContentType = WindowsRuntime]
+            } catch {
+                $sync.Error = 'Bluetooth battery reading unavailable: ' + $_.Exception.Message
+                return
+            }
+            $asTask = ([System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object {
+                    $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 -and $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1'
+                })[0]
+            function Await($operation, [Type]$resultType) {
+                $task = $asTask.MakeGenericMethod($resultType).Invoke($null, @($operation))
+                if (-not $task.Wait(8000)) { throw 'Bluetooth request timed out' }
+                return $task.Result
+            }
+            # PowerShell cannot pass a WinRT buffer to a typed parameter; reflection can
+            $toArray = [System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions].GetMethod('ToArray', [Type[]]@([Windows.Storage.Streams.IBuffer]))
+            $gattNs = 'Windows.Devices.Bluetooth.GenericAttributeProfile'
+            $servicesType = "$gattNs.GattDeviceServicesResult" -as [Type]
+            $charsType = "$gattNs.GattCharacteristicsResult" -as [Type]
+            $readType = "$gattNs.GattReadResult" -as [Type]
+            $batteryUuid = [Windows.Devices.Bluetooth.GenericAttributeProfile.GattServiceUuids]::Battery
+            $levelUuid = [Windows.Devices.Bluetooth.GenericAttributeProfile.GattCharacteristicUuids]::BatteryLevel
+            $uncached = [Windows.Devices.Bluetooth.BluetoothCacheMode]::Uncached
+
+            while (-not $sync.Stop) {
+                $left = -1
+                $right = -1
+                if ($sync.Mac) {
+                    $device = $null
+                    try {
+                        $device = Await ([Windows.Devices.Bluetooth.BluetoothLEDevice]::FromBluetoothAddressAsync([Convert]::ToUInt64($sync.Mac, 16))) ([Windows.Devices.Bluetooth.BluetoothLEDevice])
+                        if ($device -and [string]$device.ConnectionStatus -eq 'Connected') {
+                            $services = Await ($device.GetGattServicesForUuidAsync($batteryUuid, $uncached)) $servicesType
+                            foreach ($service in $services.Services) {
+                                try {
+                                    $chars = Await ($service.GetCharacteristicsForUuidAsync($levelUuid, $uncached)) $charsType
+                                    foreach ($char in $chars.Characteristics) {
+                                        $read = Await ($char.ReadValueAsync($uncached)) $readType
+                                        if ([string]$read.Status -ne 'Success') { continue }
+                                        $value = [int]([byte[]]$toArray.Invoke($null, @($read.Value)))[0]
+                                        if ([string]$char.UserDescription -like 'Peripheral*') {
+                                            if ($right -lt 0) { $right = $value }
+                                        } elseif ($left -lt 0) {
+                                            $left = $value
+                                        }
+                                    }
+                                } finally {
+                                    $service.Dispose()
+                                }
+                            }
+                        }
+                        $sync.Error = $null
+                    } catch {
+                        $sync.Error = $_.Exception.Message
+                    } finally {
+                        if ($device) { $device.Dispose() }
+                    }
+                }
+                $sync.Left = $left
+                $sync.Right = $right
+                $sync.Stamp = $sync.Stamp + 1
+                # again in a minute; every 5 s while the keyboard cannot be read
+                $waitMs = if ($left -ge 0) { 60000 } else { 5000 }
+                for ($slept = 0; $slept -lt $waitMs -and -not $sync.Stop; $slept += 250) { Start-Sleep -Milliseconds 250 }
+            }
+        }).AddArgument($script:BatterySync)
+    [void]$worker.BeginInvoke()
+    return $worker
 }
 
 function Update-OverlayLayout {
@@ -585,6 +694,31 @@ if ($SelfTest) {
     exit $failed
 }
 
+if ($BatteryTest) {
+    foreach ($name in [CorneRawInput]::KeyboardNames()) {
+        if ($name -match $DevicePattern -and $name -match '_([0-9a-f]{12})&col') {
+            $script:BatterySync.Mac = $Matches[1]
+            break
+        }
+    }
+    if (-not $script:BatterySync.Mac) {
+        'The Corne is not connected over Bluetooth.'
+        exit 1
+    }
+    "Corne Bluetooth address: $($script:BatterySync.Mac)"
+    $worker = Start-BatteryWorker
+    $deadline = (Get-Date).AddSeconds(30)
+    while ($script:BatterySync.Stamp -lt 1 -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
+    $script:BatterySync.Stop = $true
+    "left half:  $($script:BatterySync.Left)"
+    "right half: $($script:BatterySync.Right)   (-1 = not reported; needs the left half's firmware with the battery proxy)"
+    "Windows shows: $([CorneBattery]::Read($script:BatterySync.Mac))"
+    if ($script:BatterySync.Error) { "error: $($script:BatterySync.Error)" }
+    $worker.Stop()
+    $worker.Dispose()
+    exit 0
+}
+
 # ---- window ----------------------------------------------------------------
 
 $mutex = New-Object System.Threading.Mutex($false, 'Local\CorneLayerOverlay')
@@ -627,27 +761,11 @@ $form.Add_Paint({
         $g.FillEllipse($accentBrush, $margin, $margin + (S 7), (S 10), (S 10))
         $g.DrawString([string]$layer.name, $fontLayer, $accentBrush, $margin + (S 14), $margin + (S 1))
         $infoRight = $formW - $margin
-        if ($script:Battery -ge 0) {
-            # "L [###] 88%" at the right end of the header: left half battery
-            $level = $script:Battery
-            $batteryColor = if ($level -lt 20) { $script:LayerAccents[3] } elseif ($level -lt 50) { New-Color 230 180 60 } else { $script:LayerAccents[1] }
-            $batteryBrush = New-Object System.Drawing.SolidBrush($batteryColor)
-            $labelBrush = New-Object System.Drawing.SolidBrush($colorTextDim)
-            $outline = New-Object System.Drawing.Pen($colorTextDim, [float](S 1))
-            $text = "$level%"
-            $textW = $g.MeasureString($text, $fontInfo).Width
-            $textX = $formW - $margin - $textW
-            $g.DrawString($text, $fontInfo, $labelBrush, $textX, $margin + (S 4))
-            $bw = S 18; $bh = S 9
-            $bx = $textX - (S 3) - (S 2) - $bw
-            $by = $margin + (S 9)
-            $g.DrawRectangle($outline, $bx, $by, $bw, $bh)
-            $g.FillRectangle($labelBrush, ($bx + $bw), ($by + $bh * 0.3), (S 2), ($bh * 0.4))
-            $g.FillRectangle($batteryBrush, ($bx + (S 1.5)), ($by + (S 1.5)), [float][Math]::Max(1, ($bw - (S 3)) * $level / 100), ($bh - (S 3)))
-            $lw = $g.MeasureString('L', $fontInfo).Width
-            $g.DrawString('L', $fontInfo, $labelBrush, ($bx - (S 2) - $lw), $margin + (S 4))
-            $infoRight = $bx - (S 2) - $lw - (S 10)
-            $batteryBrush.Dispose(); $labelBrush.Dispose(); $outline.Dispose()
+        if ($script:BatterySync.Mac) {
+            # both halves' battery at the right end of the header: "L [###] 92%  R [###] 85%"
+            $x = Draw-Battery $g 'R' $script:BatteryRight ($formW - $margin)
+            $x = Draw-Battery $g 'L' $script:BatteryLeft ($x - (S 12))
+            $infoRight = $x - (S 10)
         }
 
         if ($script:LastKey) {
@@ -759,6 +877,8 @@ $tray.Visible = $true
 
 # ---- run -------------------------------------------------------------------
 
+$script:BatteryWorker = Start-BatteryWorker
+
 $timer = New-Object System.Windows.Forms.Timer
 $timer.Interval = 30
 $timer.Add_Tick({
@@ -800,6 +920,7 @@ $form.Add_Shown({
 
 $form.Add_FormClosed({
         $timer.Stop()
+        $script:BatterySync.Stop = $true
         [CorneHook]::Stop()
         if ($script:RawInput) { $script:RawInput.Dispose() }
         $tray.Visible = $false
@@ -810,5 +931,10 @@ try {
     [System.Windows.Forms.Application]::Run($form)
 } finally {
     [CorneHook]::Stop()
+    $script:BatterySync.Stop = $true
+    if ($script:BatteryWorker) {
+        $script:BatteryWorker.Stop()
+        $script:BatteryWorker.Dispose()
+    }
     $mutex.ReleaseMutex()
 }
