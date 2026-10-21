@@ -145,7 +145,8 @@ function Read-ProtoFields {
         $fields.Add([pscustomobject]$field)
     }
 
-    return @($fields)
+    # @($fields) throws "Argument types do not match" on Windows PowerShell 5.1.
+    return $fields.ToArray()
 }
 
 function Get-ProtoField {
