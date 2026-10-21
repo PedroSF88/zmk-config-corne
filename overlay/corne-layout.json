@@ -384,10 +384,10 @@
      "kind": "key"
     },
     {
-     "label": "ENT",
+     "label": "CTRL",
      "vks": [
       {
-       "vk": 13,
+       "vk": 162,
        "shift": false
       }
      ],
@@ -414,10 +414,10 @@
      "kind": "key"
     },
     {
-     "label": "SPC",
+     "label": "BSPC",
      "vks": [
       {
-       "vk": 32,
+       "vk": 8,
        "shift": false
       }
      ],
@@ -464,10 +464,10 @@
      "kind": "key"
     },
     {
-     "label": "VOL-",
+     "label": "VOL+",
      "vks": [
       {
-       "vk": 174,
+       "vk": 175,
        "shift": false
       }
      ],
@@ -770,10 +770,10 @@
      "kind": "layer"
     },
     {
-     "label": "ENT",
+     "label": "CTRL",
      "vks": [
       {
-       "vk": 13,
+       "vk": 162,
        "shift": false
       }
      ],
@@ -800,10 +800,10 @@
      "kind": "trans"
     },
     {
-     "label": "SPC",
+     "label": "BSPC",
      "vks": [
       {
-       "vk": 32,
+       "vk": 8,
        "shift": false
       }
      ],
@@ -1159,10 +1159,10 @@
      "kind": "layer"
     },
     {
-     "label": "ENT",
+     "label": "CTRL",
      "vks": [
       {
-       "vk": 13,
+       "vk": 162,
        "shift": false
       }
      ],
@@ -1189,10 +1189,10 @@
      "kind": "trans"
     },
     {
-     "label": "SPC",
+     "label": "BSPC",
      "vks": [
       {
-       "vk": 32,
+       "vk": 8,
        "shift": false
       }
      ],
@@ -1417,10 +1417,10 @@
      "kind": "key"
     },
     {
-     "label": "F11",
+     "label": "F10",
      "vks": [
       {
-       "vk": 122,
+       "vk": 121,
        "shift": false
       }
      ],
@@ -1468,10 +1468,10 @@
      "kind": "layer"
     },
     {
-     "label": "ENT",
+     "label": "CTRL",
      "vks": [
       {
-       "vk": 13,
+       "vk": 162,
        "shift": false
       }
      ],
@@ -1498,10 +1498,10 @@
      "kind": "trans"
     },
     {
-     "label": "SPC",
+     "label": "BSPC",
      "vks": [
       {
-       "vk": 32,
+       "vk": 8,
        "shift": false
       }
      ],
@@ -1865,10 +1865,10 @@
      "sub": "ALT"
     },
     {
-     "label": "ENT",
+     "label": "CTRL",
      "vks": [
       {
-       "vk": 13,
+       "vk": 162,
        "shift": false
       }
      ],
@@ -1895,10 +1895,10 @@
      "kind": "trans"
     },
     {
-     "label": "SPC",
+     "label": "BSPC",
      "vks": [
       {
-       "vk": 32,
+       "vk": 8,
        "shift": false
       }
      ],
@@ -1941,7 +1941,11 @@
    "vks": [
     {
      "vk": 46,
-     "shift": false
+     "shift": false,
+     "mods": [
+      "alt",
+      "ctrl"
+     ]
     }
    ]
   },

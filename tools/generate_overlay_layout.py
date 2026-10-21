@@ -106,6 +106,41 @@ KEYS = {
     "LPAR": ("(", 0x39, True),
     "RIGHT_PARENTHESIS": (")", 0x30, True),
     "RPAR": (")", 0x30, True),
+    # short names and other common keys, so later keymap edits still light up
+    "BSPC": ("BSPC", 0x08, False),
+    "DEL": ("DEL", 0x2E, False),
+    "RET": ("ENT", 0x0D, False),
+    "RETURN": ("ENT", 0x0D, False),
+    "GRAVE": ("`", 0xC0, False),
+    "TILDE": ("~", 0xC0, True),
+    "EXCLAMATION": ("!", 0x31, True),
+    "EXCL": ("!", 0x31, True),
+    "CARET": ("^", 0x36, True),
+    "UNDERSCORE": ("_", 0xBD, True),
+    "UNDER": ("_", 0xBD, True),
+    "DOUBLE_QUOTES": ('"', 0xDE, True),
+    "DQT": ('"', 0xDE, True),
+    "COLON": (":", 0xBA, True),
+    "LESS_THAN": ("<", 0xBC, True),
+    "LT": ("<", 0xBC, True),
+    "GREATER_THAN": (">", 0xBE, True),
+    "GT": (">", 0xBE, True),
+    "LEFT_BRACE": ("{", 0xDB, True),
+    "LBRC": ("{", 0xDB, True),
+    "RIGHT_BRACE": ("}", 0xDD, True),
+    "RBRC": ("}", 0xDD, True),
+    "CAPSLOCK": ("CAPS", 0x14, False),
+    "CAPS": ("CAPS", 0x14, False),
+    "INSERT": ("INS", 0x2D, False),
+    "INS": ("INS", 0x2D, False),
+    "PRINTSCREEN": ("PSCR", 0x2C, False),
+    "PSCRN": ("PSCR", 0x2C, False),
+    "C_MUTE": ("MUTE", 0xAD, False),
+    "C_PLAY_PAUSE": ("PLAY", 0xB3, False),
+    "C_PP": ("PLAY", 0xB3, False),
+    "C_NEXT": ("NEXT", 0xB0, False),
+    "C_PREVIOUS": ("PREV", 0xB1, False),
+    "C_PREV": ("PREV", 0xB1, False),
 }
 for _i in range(26):
     _c = chr(ord("A") + _i)
@@ -132,7 +167,12 @@ def key_info(name):
         prefix = "".join(dict.fromkeys(mods))
         if prefix == "CTRL+ALT+" or prefix == "ALT+CTRL+":
             prefix = "C+A+"
-        return prefix + label, [{"vk": vk, "shift": shift}]
+        entry = {"vk": vk, "shift": shift}
+        if mods:
+            # e.g. LA(LC(DELETE)): the overlay matches plain keys first, so a
+            # plain Delete is not taken for Ctrl+Alt+Delete
+            entry["mods"] = sorted(set(m.rstrip("+").lower() for m in mods))
+        return prefix + label, [entry]
     return name.replace("_", " ")[:6], []
 
 

@@ -42,6 +42,10 @@ shortcut to `Start-Overlay.cmd` in that folder.
   layer (Shift-aware, so `=` and `+` light different keys). A keystroke that
   no key on the layer sends is matched to a combo; the combo's keys light up
   with its name in the top-right corner.
+- Combos on the map: each combo active on the shown layer is a small label
+  between its keys (dashed lines to the keys when they are not side by
+  side). The label lights up when you use the combo. Tray -> "Show combos"
+  turns them off.
 - Keymap edits show up by themselves: when `config/corne.keymap` is saved,
   the overlay re-runs `tools/generate_overlay_layout.py` in the background
   (needs Python) and reloads within about 2 seconds ("keymap updated"). If

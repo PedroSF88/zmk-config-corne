@@ -127,6 +127,7 @@ $fontKeySmall = New-Object System.Drawing.Font('Segoe UI Semibold', (P 6.5), [Sy
 $fontSub = New-Object System.Drawing.Font('Segoe UI', (P 6), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
 $fontLayer = New-Object System.Drawing.Font('Segoe UI Semibold', (P 11), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
 $fontInfo = New-Object System.Drawing.Font('Segoe UI', (P 8.5), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
+$fontCombo = New-Object System.Drawing.Font('Segoe UI Semibold', (P 6.5), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point)
 $centered = New-Object System.Drawing.StringFormat
 $centered.Alignment = [System.Drawing.StringAlignment]::Center
 $centered.LineAlignment = [System.Drawing.StringAlignment]::Center
@@ -148,11 +149,109 @@ function New-RoundedPath([System.Drawing.RectangleF]$r, [float]$radius) {
     return $path
 }
 
+function Get-RectCenter([System.Drawing.RectangleF]$r) {
+    return New-Object System.Drawing.PointF(($r.X + $r.Width / 2), ($r.Y + $r.Height / 2))
+}
+
+# Point where a line from the centre of $r towards $toward leaves $r.
+function Get-EdgePoint([System.Drawing.RectangleF]$r, [System.Drawing.PointF]$toward) {
+    $c = Get-RectCenter $r
+    $dx = $toward.X - $c.X
+    $dy = $toward.Y - $c.Y
+    if ($dx -eq 0 -and $dy -eq 0) { return $c }
+    $sx = if ($dx -ne 0) { ($r.Width / 2) / [Math]::Abs($dx) } else { [double]::MaxValue }
+    $sy = if ($dy -ne 0) { ($r.Height / 2) / [Math]::Abs($dy) } else { [double]::MaxValue }
+    $t = [Math]::Min(1.0, [Math]::Min($sx, $sy))
+    return New-Object System.Drawing.PointF(($c.X + $dx * $t), ($c.Y + $dy * $t))
+}
+
+# Combos drawn on the map: a small label between the keys that make the
+# combo, with dashed lines to the keys when they are not side by side.
+# The label lights up while the combo is pressed.
+function Draw-Combos($g, [System.Drawing.Color]$accent) {
+    $placed = New-Object System.Collections.ArrayList
+    $linePen = New-Object System.Drawing.Pen(([System.Drawing.Color]::FromArgb(170, $colorTextDim.R, $colorTextDim.G, $colorTextDim.B)), [float](S 1))
+    $linePen.DashStyle = [System.Drawing.Drawing2D.DashStyle]::Dash
+    $pillFill = New-Object System.Drawing.SolidBrush($colorBackground)
+    $pillPen = New-Object System.Drawing.Pen($colorTextDim, [float](S 1))
+    $litFill = New-Object System.Drawing.SolidBrush($accent)
+    $litPen = New-Object System.Drawing.Pen($accent, [float](S 1))
+    $textBrush = New-Object System.Drawing.SolidBrush($colorText)
+    $darkBrush = New-Object System.Drawing.SolidBrush($colorBackground)
+    try {
+        foreach ($combo in $layout.combos) {
+            if ($null -ne $combo.layers -and -not ($combo.layers -contains $script:Layer)) { continue }
+            $positions = @($combo.positions | ForEach-Object { [int]$_ } | Where-Object { $script:KeyRects.ContainsKey($_) } | Sort-Object)
+            if ($positions.Count -lt 2) { continue }
+            $rects = @($positions | ForEach-Object { $script:KeyRects[$_] })
+            $cx = 0.0
+            $cy = 0.0
+            foreach ($r in $rects) {
+                $c = Get-RectCenter $r
+                $cx += $c.X
+                $cy += $c.Y
+            }
+            $cx /= $rects.Count
+            $cy /= $rects.Count
+
+            $label = [string]$combo.label
+            $size = $g.MeasureString($label, $fontCombo)
+            $h = $size.Height + (S 1)
+            $w = [Math]::Max($size.Width + (S 4), $h)
+
+            # two keys side by side in one row: the label sits in the gap between them
+            $adjacent = ($positions.Count -eq 2) -and ($positions[1] - $positions[0] -eq 1) -and
+                ([Math]::Floor($positions[0] / 12) -eq [Math]::Floor($positions[1] / 12)) -and ($positions[1] -lt 36)
+            if (-not $adjacent) {
+                # otherwise on the row gap next to the key nearest the middle of the combo
+                $nearest = $null
+                $best = [double]::MaxValue
+                foreach ($r in $script:KeyRects.Values) {
+                    $c = Get-RectCenter $r
+                    $d = ($c.X - $cx) * ($c.X - $cx) + ($c.Y - $cy) * ($c.Y - $cy)
+                    if ($d -lt $best) { $best = $d; $nearest = $r }
+                }
+                $cy = if ($cy -ge (Get-RectCenter $nearest).Y) { $nearest.Bottom + $gap / 2 } else { $nearest.Top - $gap / 2 }
+            }
+
+            # slide sideways until it does not cover another combo label
+            $rect = $null
+            foreach ($slide in @(0, 1, -1, 2, -2, 3, -3)) {
+                $candidate = New-Object System.Drawing.RectangleF(($cx - $w / 2 + $slide * ($w / 2 + (S 8))), ($cy - $h / 2), $w, $h)
+                $free = $true
+                foreach ($other in $placed) {
+                    if ($candidate.IntersectsWith($other)) { $free = $false; break }
+                }
+                if ($free) { $rect = $candidate; break }
+            }
+            if (-not $rect) { $rect = New-Object System.Drawing.RectangleF(($cx - $w / 2), ($cy - $h / 2), $w, $h) }
+            [void]$placed.Add($rect)
+
+            $isLit = $script:LitCombos.ContainsKey([string]$combo.name)
+            if (-not $adjacent) {
+                $mid = Get-RectCenter $rect
+                foreach ($r in $rects) {
+                    $g.DrawLine($(if ($isLit) { $litPen } else { $linePen }), (Get-EdgePoint $rect (Get-RectCenter $r)), (Get-EdgePoint $r $mid))
+                }
+            }
+            $path = New-RoundedPath $rect ($h / 2)
+            $g.FillPath($(if ($isLit) { $litFill } else { $pillFill }), $path)
+            $g.DrawPath($(if ($isLit) { $litPen } else { $pillPen }), $path)
+            $path.Dispose()
+            $g.DrawString($label, $fontCombo, $(if ($isLit) { $darkBrush } else { $textBrush }), $rect, $centered)
+        }
+    } finally {
+        foreach ($o in @($linePen, $pillFill, $pillPen, $litFill, $litPen, $textBrush, $darkBrush)) { $o.Dispose() }
+    }
+}
+
 # ---- state -----------------------------------------------------------------
 
 $script:Layer = 0
 $script:Lit = @{}        # position -> release time (DateTime) or $null while held
-$script:Held = @{}       # vk -> @{ Positions; Since }
+$script:Held = @{}       # vk -> @{ Positions; Combo; Since }
+$script:LitCombos = @{}  # combo name -> release time (DateTime) or $null while held
+$script:ShowCombos = $true
 $script:LastKey = ''
 $script:GuessLayers = $false
 $script:RawInput = $null
@@ -180,26 +279,34 @@ function Get-LayerData([int]$index) {
 
 function Find-Positions([int]$vk, [bool]$shift) {
     $keys = (Get-LayerData $script:Layer).keys
-    $exact = New-Object System.Collections.ArrayList
-    $loose = New-Object System.Collections.ArrayList
-    for ($pos = 0; $pos -lt $keys.Count; $pos++) {
-        foreach ($entry in $keys[$pos].vks) {
-            if ([int]$entry.vk -ne $vk) { continue }
-            if ([bool]$entry.shift -eq $shift) { [void]$exact.Add($pos) } else { [void]$loose.Add($pos) }
+    # First keys and combos that send a plain key, then ones that send a key
+    # with modifiers (Ctrl+Alt+Del also arrives as a Delete keystroke).
+    foreach ($withMods in @($false, $true)) {
+        $exact = New-Object System.Collections.ArrayList
+        $loose = New-Object System.Collections.ArrayList
+        for ($pos = 0; $pos -lt $keys.Count; $pos++) {
+            foreach ($entry in $keys[$pos].vks) {
+                if ([int]$entry.vk -ne $vk -or [bool]$entry.mods -ne $withMods) { continue }
+                if ([bool]$entry.shift -eq $shift) { [void]$exact.Add($pos) } else { [void]$loose.Add($pos) }
+            }
         }
-    }
-    if ($exact.Count -gt 0) { return [pscustomobject]@{ Positions = @($exact); Label = '' } }
-    if ($loose.Count -gt 0) { return [pscustomobject]@{ Positions = @($loose); Label = '' } }
+        if ($exact.Count -gt 0) { return [pscustomobject]@{ Positions = @($exact); Label = ''; Combo = $null } }
+        if ($loose.Count -gt 0) { return [pscustomobject]@{ Positions = @($loose); Label = ''; Combo = $null } }
 
-    foreach ($combo in $layout.combos) {
-        if ($combo.layers -and -not ($combo.layers -contains $script:Layer)) { continue }
-        foreach ($entry in $combo.vks) {
-            if ([int]$entry.vk -eq $vk) {
-                return [pscustomobject]@{ Positions = @($combo.positions | ForEach-Object { [int]$_ }); Label = "$($combo.label) (combo)" }
+        foreach ($combo in $layout.combos) {
+            if ($null -ne $combo.layers -and -not ($combo.layers -contains $script:Layer)) { continue }
+            foreach ($entry in $combo.vks) {
+                if ([int]$entry.vk -eq $vk -and [bool]$entry.mods -eq $withMods) {
+                    return [pscustomobject]@{
+                        Positions = @($combo.positions | ForEach-Object { [int]$_ })
+                        Label     = "$($combo.label) (combo)"
+                        Combo     = [string]$combo.name
+                    }
+                }
             }
         }
     }
-    return [pscustomobject]@{ Positions = @(); Label = '' }
+    return [pscustomobject]@{ Positions = @(); Label = ''; Combo = $null }
 }
 
 function Test-LayerHasKey([int]$index, [int]$vk, [bool]$shift, [bool]$exact) {
@@ -209,7 +316,7 @@ function Test-LayerHasKey([int]$index, [int]$vk, [bool]$shift, [bool]$exact) {
         }
     }
     foreach ($combo in $layout.combos) {
-        if ($combo.layers -and -not ($combo.layers -contains $index)) { continue }
+        if ($null -ne $combo.layers -and -not ($combo.layers -contains $index)) { continue }
         foreach ($entry in $combo.vks) {
             if ([int]$entry.vk -eq $vk) { return $true }
         }
@@ -220,6 +327,7 @@ function Test-LayerHasKey([int]$index, [int]$vk, [bool]$shift, [bool]$exact) {
 function Set-Layer([int]$index) {
     $script:Layer = $index
     $script:Lit.Clear()
+    $script:LitCombos.Clear()
     $script:Held.Clear()
     $script:LastKey = ''
 }
@@ -354,8 +462,9 @@ function Process-Events {
             if ($script:Held.ContainsKey($vk)) { continue }   # auto-repeat
             Update-LayerGuess $vk $keyEvent.Shift
             $found = Find-Positions $vk $keyEvent.Shift
-            $script:Held[$vk] = @{ Positions = $found.Positions; Since = [DateTime]::UtcNow }
+            $script:Held[$vk] = @{ Positions = $found.Positions; Combo = $found.Combo; Since = [DateTime]::UtcNow }
             foreach ($pos in $found.Positions) { $script:Lit[$pos] = $null }
+            if ($found.Combo) { $script:LitCombos[$found.Combo] = $null }
             if ($found.Label) { Show-Info $found.Label }
 
             if ($vk -eq 0xA0 -or $vk -eq 0xA1) {
@@ -375,6 +484,7 @@ function Process-Events {
                 foreach ($pos in $held.Positions) {
                     if ($script:Lit.ContainsKey($pos)) { $script:Lit[$pos] = $release }
                 }
+                if ($held.Combo -and $script:LitCombos.ContainsKey($held.Combo)) { $script:LitCombos[$held.Combo] = $release }
                 $script:Held.Remove($vk)
                 $changed = $true
             }
@@ -386,6 +496,13 @@ function Process-Events {
         $release = $script:Lit[$pos]
         if ($release -and $release -le $now) {
             $script:Lit.Remove($pos)
+            $changed = $true
+        }
+    }
+    foreach ($name in @($script:LitCombos.Keys)) {
+        $release = $script:LitCombos[$name]
+        if ($release -and $release -le $now) {
+            $script:LitCombos.Remove($name)
             $changed = $true
         }
     }
@@ -417,6 +534,7 @@ if ($SelfTest) {
             [void](Process-Events)
             if ($phase) {
                 $script:SeenLit = (@($script:Lit.Keys | Sort-Object) -join ',')
+                $script:SeenCombos = (@($script:LitCombos.Keys | Sort-Object) -join ',')
                 $script:SeenLayer = [string](Get-LayerData $script:Layer).name
                 $script:SeenInfo = $script:LastKey
             }
@@ -426,17 +544,23 @@ if ($SelfTest) {
     }
 
     $steps = @(
-        @{ Name = 'Q on Base';                      Keys = @('51');           Layer = 'Base';    Lit = '1' },
-        @{ Name = '7 -> guess NavNum';              Keys = @('37');           Layer = 'NavNum';  Lit = '7' },
-        @{ Name = 'Space on NavNum stays (trans)';  Keys = @('20');           Layer = 'NavNum';  Lit = '39,40' },
-        @{ Name = 'Q -> guess Base';                Keys = @('51');           Layer = 'Base';    Lit = '1' },
-        @{ Name = 'Shift+2 (@) -> guess Symbols';   Keys = @('A0', '+32');    Layer = 'Symbols'; Lit = '6' },
-        @{ Name = 'signal F13 -> Base';             Keys = @('!7C');          Layer = 'Base';    Lit = '' },
-        @{ Name = 'Backspace combo stays on Base';  Keys = @('08');           Layer = 'Base';    Lit = '9,10' },
-        @{ Name = 'dash combo stays on Base';       Keys = @('BD');           Layer = 'Base';    Lit = '19,20' },
-        @{ Name = 'signal F16 -> System';           Keys = @('!7F');          Layer = 'System';  Lit = '' },
-        @{ Name = 'F1 on System stays';             Keys = @('70');           Layer = 'System';  Lit = '6' },
-        @{ Name = 'Shift alone lights Shift';       Keys = @('A1');           Layer = 'System';  Lit = '34' }
+        @{ Name = 'Q on Base';                      Keys = @('51');        Layer = 'Base';    Lit = '1';     Combos = '' },
+        @{ Name = '7 -> guess NavNum';              Keys = @('37');        Layer = 'NavNum';  Lit = '7';     Combos = '' },
+        @{ Name = 'Space on NavNum stays (trans)';  Keys = @('20');        Layer = 'NavNum';  Lit = '39';    Combos = '' },
+        @{ Name = 'Backspace on NavNum stays';      Keys = @('08');        Layer = 'NavNum';  Lit = '40';    Combos = '' },
+        @{ Name = 'Q -> guess Base';                Keys = @('51');        Layer = 'Base';    Lit = '1';     Combos = '' },
+        @{ Name = 'Ctrl thumb on Base';             Keys = @('A2');        Layer = 'Base';    Lit = '37';    Combos = '' },
+        @{ Name = 'Backspace thumb on Base';        Keys = @('08');        Layer = 'Base';    Lit = '40';    Combos = '' },
+        @{ Name = 'dash combo lights its label';    Keys = @('BD');        Layer = 'Base';    Lit = '19,20'; Combos = 'dash' },
+        @{ Name = 'Delete combo, not Ctrl+Alt+Del'; Keys = @('2E');        Layer = 'Base';    Lit = '8,10';  Combos = 'del' },
+        @{ Name = 'Right Ctrl combo (Base only)';   Keys = @('A3');        Layer = 'Base';    Lit = '8,9';   Combos = 'RCtrl' },
+        @{ Name = 'Shift+2 (@) -> guess Symbols';   Keys = @('A0', '+32'); Layer = 'Symbols'; Lit = '6';     Combos = '' },
+        @{ Name = 'signal F13 -> Base';             Keys = @('!7C');       Layer = 'Base';    Lit = '';      Combos = '' },
+        @{ Name = 'signal F14 -> NavNum';           Keys = @('!7D');       Layer = 'NavNum';  Lit = '';      Combos = '' },
+        @{ Name = 'Right Ctrl combo off on NavNum'; Keys = @('A3');        Layer = 'NavNum';  Lit = '';      Combos = '' },
+        @{ Name = 'signal F16 -> System';           Keys = @('!7F');       Layer = 'System';  Lit = '';      Combos = '' },
+        @{ Name = 'F10 on System (was F11 twice)';  Keys = @('79');        Layer = 'System';  Lit = '31';    Combos = '' },
+        @{ Name = 'Shift alone lights Shift';       Keys = @('A1');        Layer = 'System';  Lit = '34';    Combos = '' }
     )
 
     $failed = 0
@@ -444,9 +568,9 @@ if ($SelfTest) {
     Set-Layer 0
     foreach ($step in $steps) {
         Invoke-Step $step.Keys
-        $ok = ($script:SeenLayer -eq $step.Layer) -and ($script:SeenLit -eq $step.Lit)
+        $ok = ($script:SeenLayer -eq $step.Layer) -and ($script:SeenLit -eq $step.Lit) -and ($script:SeenCombos -eq $step.Combos)
         if (-not $ok) { $failed++ }
-        '{0}  {1,-32} layer={2,-8} lit=[{3}] {4}' -f $(if ($ok) { 'PASS' } else { 'FAIL' }), $step.Name, $script:SeenLayer, $script:SeenLit, $script:SeenInfo
+        '{0}  {1,-32} layer={2,-8} lit=[{3}] combo=[{4}] {5}' -f $(if ($ok) { 'PASS' } else { 'FAIL' }), $step.Name, $script:SeenLayer, $script:SeenLit, $script:SeenCombos, $script:SeenInfo
     }
 
     # Baseline: with guessing off, the same '7' must NOT move the overlay.
@@ -576,6 +700,8 @@ $form.Add_Paint({
             }
         }
 
+        if ($script:ShowCombos) { Draw-Combos $g $accent }
+
         foreach ($b in @($accentBrush, $litFill, $keyFill, $emptyFill, $textBrush, $dimBrush, $faintBrush, $darkBrush)) { $b.Dispose() }
     })
 
@@ -615,6 +741,12 @@ foreach ($corner in @('TopLeft', 'TopRight', 'BottomLeft', 'BottomRight')) {
     $item.Add_Click({ param($s, $a) Set-OverlayPosition ([string]$s.Tag) })
 }
 [void]$menu.Items.Add($cornerMenu)
+
+$combosItem = New-Object System.Windows.Forms.ToolStripMenuItem('Show combos')
+$combosItem.CheckOnClick = $true
+$combosItem.Checked = $true
+$combosItem.Add_CheckedChanged({ $script:ShowCombos = $combosItem.Checked; $form.Invalidate() })
+[void]$menu.Items.Add($combosItem)
 
 $resetItem = $menu.Items.Add('Reset to Base layer')
 $resetItem.Add_Click({ Set-Layer 0; $form.Invalidate() })
