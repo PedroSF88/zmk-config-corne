@@ -499,7 +499,9 @@ function Start-BatteryWorker {
                                         if ([string]$read.Status -ne 'Success') { continue }
                                         $value = [int]([byte[]]$toArray.Invoke($null, @($read.Value)))[0]
                                         if ([string]$char.UserDescription -like 'Peripheral*') {
-                                            if ($right -lt 0) { $right = $value }
+                                            # 0 = the left half has no reading from the right half yet
+                                            # (not connected, e.g. asleep): unknown, not empty
+                                            if ($right -lt 0 -and $value -gt 0) { $right = $value }
                                         } elseif ($left -lt 0) {
                                             $left = $value
                                         }
@@ -711,7 +713,7 @@ if ($BatteryTest) {
     while ($script:BatterySync.Stamp -lt 1 -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
     $script:BatterySync.Stop = $true
     "left half:  $($script:BatterySync.Left)"
-    "right half: $($script:BatterySync.Right)   (-1 = not reported; needs the left half's firmware with the battery proxy)"
+    "right half: $($script:BatterySync.Right)   (-1 = not known: the right half is not connected to the left half, e.g. asleep - press a key on it; or the left half's firmware does not pass it on)"
     "Windows shows: $([CorneBattery]::Read($script:BatterySync.Mac))"
     if ($script:BatterySync.Error) { "error: $($script:BatterySync.Error)" }
     $worker.Stop()
