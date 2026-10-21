@@ -99,6 +99,15 @@ public static class CorneHook {
         SetLayeredWindowAttributes(hWnd, 0, (byte)Math.Round(opacity * 255), 0x2);
     }
 
+    // Toggle click-through (WS_EX_TRANSPARENT) so the window can be grabbed and
+    // dragged, leaving the layered / tool-window / no-activate styles in place.
+    public static void SetClickThrough(IntPtr hWnd, bool enabled) {
+        int styles = GetWindowLong(hWnd, -20);
+        if (enabled) { styles |= 0x00000020; }
+        else { styles &= ~0x00000020; }
+        SetWindowLong(hWnd, -20, styles);
+    }
+
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
         if (nCode >= 0) {
             KBDLLHOOKSTRUCT k = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));

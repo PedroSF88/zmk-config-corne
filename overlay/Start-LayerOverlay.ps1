@@ -724,7 +724,13 @@ if ($BatteryTest) {
 # ---- window ----------------------------------------------------------------
 
 $mutex = New-Object System.Threading.Mutex($false, 'Local\CorneLayerOverlay')
-if (-not $mutex.WaitOne(0)) {
+try {
+    $gotMutex = $mutex.WaitOne(0)
+} catch [System.Threading.AbandonedMutexException] {
+    # a previous instance was killed without releasing the lock; we own it now
+    $gotMutex = $true
+}
+if (-not $gotMutex) {
     Write-Host 'Corne overlay is already running (see the tray icon).'
     exit 0
 }
@@ -740,6 +746,12 @@ $form.ClientSize = New-Object System.Drawing.Size($formW, $formH)
 $form.GetType().GetProperty('DoubleBuffered', [Reflection.BindingFlags]'NonPublic,Instance').SetValue($form, $true, $null)
 
 $script:Anchor = $Anchor
+$script:MoveMode = $false
+$script:Dragging = $false
+$script:DragDX = 0
+$script:DragDY = 0
+$script:StateFile = Join-Path $env:LOCALAPPDATA 'CorneLayerOverlay\state.json'
+
 function Set-OverlayPosition([string]$corner) {
     $script:Anchor = $corner
     $area = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
@@ -748,7 +760,62 @@ function Set-OverlayPosition([string]$corner) {
     $y = if ($corner -like 'Top*') { $area.Top + $m } else { $area.Bottom - $form.Height - $m }
     $form.Location = New-Object System.Drawing.Point($x, $y)
 }
-Set-OverlayPosition $Anchor
+
+# Remember where the widget was left, so it returns there next launch.
+function Save-OverlayState {
+    try {
+        $dir = Split-Path $script:StateFile -Parent
+        if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+        $state = @{ x = [int]$form.Location.X; y = [int]$form.Location.Y }
+        ($state | ConvertTo-Json -Compress) | Set-Content -Path $script:StateFile -Encoding ASCII
+    } catch { }
+}
+
+# Restore a saved position, but only if it still lands on a connected screen.
+function Restore-OverlayPosition {
+    try {
+        if (Test-Path $script:StateFile) {
+            $s = Get-Content -Raw $script:StateFile | ConvertFrom-Json
+            if ($null -ne $s.x -and $null -ne $s.y) {
+                $pt = New-Object System.Drawing.Point([int]$s.x, [int]$s.y)
+                $rect = New-Object System.Drawing.Rectangle($pt, $form.Size)
+                foreach ($scr in [System.Windows.Forms.Screen]::AllScreens) {
+                    if ($scr.WorkingArea.IntersectsWith($rect)) { $form.Location = $pt; return $true }
+                }
+            }
+        }
+    } catch { }
+    return $false
+}
+
+if (-not (Restore-OverlayPosition)) { Set-OverlayPosition $Anchor }
+
+# Drag the widget while Move mode is on (tray -> Move widget).
+$form.Add_MouseDown({
+        param($mdSender, $mdArgs)
+        if ($script:MoveMode -and $mdArgs.Button -eq [System.Windows.Forms.MouseButtons]::Left) {
+            $script:Dragging = $true
+            $form.Capture = $true
+            $p = [System.Windows.Forms.Cursor]::Position
+            $script:DragDX = $p.X - $form.Location.X
+            $script:DragDY = $p.Y - $form.Location.Y
+        }
+    })
+$form.Add_MouseMove({
+        param($mmSender, $mmArgs)
+        if ($script:Dragging) {
+            $p = [System.Windows.Forms.Cursor]::Position
+            $form.Location = New-Object System.Drawing.Point(($p.X - $script:DragDX), ($p.Y - $script:DragDY))
+        }
+    })
+$form.Add_MouseUp({
+        param($muSender, $muArgs)
+        if ($script:Dragging) {
+            $script:Dragging = $false
+            $form.Capture = $false
+            Save-OverlayState
+        }
+    })
 
 $form.Add_Paint({
         param($sender, $e)
@@ -822,6 +889,14 @@ $form.Add_Paint({
 
         if ($script:ShowCombos) { Draw-Combos $g $accent }
 
+        if ($script:MoveMode) {
+            # dashed accent border signals the widget can be dragged
+            $movePen = New-Object System.Drawing.Pen($accent, 2)
+            $movePen.DashStyle = [System.Drawing.Drawing2D.DashStyle]::Dash
+            $g.DrawRectangle($movePen, 1, 1, ($formW - 3), ($formH - 3))
+            $movePen.Dispose()
+        }
+
         foreach ($b in @($accentBrush, $litFill, $keyFill, $emptyFill, $textBrush, $dimBrush, $faintBrush, $darkBrush)) { $b.Dispose() }
     })
 
@@ -854,11 +929,27 @@ $toggleItem.Add_Click({
     })
 $tray.Add_DoubleClick({ $toggleItem.PerformClick() })
 
+$moveItem = New-Object System.Windows.Forms.ToolStripMenuItem('Move widget')
+$moveItem.CheckOnClick = $true
+$moveItem.Add_CheckedChanged({
+        $script:MoveMode = $moveItem.Checked
+        [CorneHook]::SetClickThrough($form.Handle, (-not $script:MoveMode))
+        if ($script:MoveMode) {
+            $moveItem.Text = 'Lock position (drag it now)'
+            if (-not $form.Visible) { $form.Show(); $toggleItem.Text = 'Hide overlay' }
+        } else {
+            $moveItem.Text = 'Move widget'
+            Save-OverlayState
+        }
+        $form.Invalidate()
+    })
+[void]$menu.Items.Add($moveItem)
+
 $cornerMenu = New-Object System.Windows.Forms.ToolStripMenuItem('Corner')
 foreach ($corner in @('TopLeft', 'TopRight', 'BottomLeft', 'BottomRight')) {
     $item = $cornerMenu.DropDownItems.Add($corner)
     $item.Tag = $corner
-    $item.Add_Click({ param($s, $a) Set-OverlayPosition ([string]$s.Tag) })
+    $item.Add_Click({ param($s, $a) Set-OverlayPosition ([string]$s.Tag); Save-OverlayState })
 }
 [void]$menu.Items.Add($cornerMenu)
 

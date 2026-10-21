@@ -17,9 +17,11 @@ Options: `-Anchor TopLeft|TopRight|BottomLeft|BottomRight` (default
 BottomRight), `-Scale 1.2`, `-OverlayOpacity 0.8`, `-AllKeyboards` (light
 keys from every keyboard, not only the Corne; turns off layer guessing).
 
-Tray icon (right-click): hide/show, move to another corner, reset to Base,
-exit. Double-click the tray icon to hide/show. Hover it for the battery
-level. Only one copy runs at a time.
+Tray icon (right-click): hide/show; "Move widget" (drag it anywhere, then
+click the tray item again to lock); snap to a corner; reset to Base; exit.
+Double-click the tray icon to hide/show. Hover it for the battery level.
+Where you leave the widget is remembered for next launch
+(`%LOCALAPPDATA%\CorneLayerOverlay\state.json`). Only one copy runs at a time.
 
 To start it with Windows: press Win+R, type `shell:startup`, and put a
 shortcut to `Start-Overlay.cmd` in that folder.
