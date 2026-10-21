@@ -1,12 +1,12 @@
 # Corne keyboard (zmk-config-corne) -- status
 
 ## NOW
-Updated: 2026-10-21 -- Claude Opus 5.5 (VS Code)
+Updated: 2026-10-21 -- Claude Opus 4.8 (VS Code)
 Goal: a small Windows overlay that shows the Corne's layer, keymap, combos and battery, plus a cleaner keymap. Done.
-Stage: Done (flo, 10/21). Both halves on ZMK v0.3; overlay running on this PC.
-Next step: none required. Optional: merge `layer-overlay` into `master` on GitHub so edits made there start from this keymap -- who: flo (OK), then claude
-Waiting on flo: OK to merge `layer-overlay` -> `master` and push
-Saved: all work committed on `layer-overlay` and pushed to PedroSF88/zmk-config-corne, except this status commit (local); `master` not updated
+Stage: Done (flo, 10/21). Both halves on ZMK v0.3; overlay running on this PC. `layer-overlay` merged into `master` on the fork and pushed.
+Next step: none. On another Windows PC: clone the repo (now on `master`) or copy the `overlay\` folder, then run `overlay\Start-Overlay.cmd`. Launch on this PC with Ctrl+Alt+C (Start Menu shortcut "Corne Overlay").
+Waiting on flo: nothing
+Saved: all work committed and pushed to PedroSF88/zmk-config-corne on both `layer-overlay` and `master`, through the status commit
 Inbox: empty
 
 ## On the keyboard (2026-10-21)
@@ -27,6 +27,9 @@ Inbox: empty
 
 ## Log
 
+- 2026-10-21 -- VS Code, Claude Opus 4.8. Pushed `layer-overlay` and merged it
+  into `master` on the fork (fast-forward). Added a Start Menu launch shortcut
+  (Ctrl+Alt+C) and documented installing the overlay on another Windows PC.
 - 2026-10-21 -- VS Code, Claude Opus 5.5 (built and tested by Claude). Took
   the project out of its April prototype state: layer overlay (layer signals
   over USB and Bluetooth, Corne-only key lighting, layer guess, combos on the
